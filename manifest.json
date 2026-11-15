@@ -1,0 +1,40 @@
+{
+  "id": "/hotel/",
+  "name": "Alma Hotel - Gestion Hôtelière & Caisse",
+  "short_name": "Alma Hotel",
+  "description": "Système professionnel de gestion hôtelière, réservations, arrivées express et suivi de caisse hors-ligne.",
+  "lang": "fr",
+  "start_url": "./index.php",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1e1b4b",
+  "orientation": "any",
+  "categories": ["business", "productivity", "travel"],
+  "icons": [
+    {
+      "src": "assets/img/pwa/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/img/pwa/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/img/pwa/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/img/pwa/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

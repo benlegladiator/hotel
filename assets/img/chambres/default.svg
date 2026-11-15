@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a1628"/>
+      <stop offset="100%" stop-color="#1e3a5f"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c9a84c"/>
+      <stop offset="100%" stop-color="#f3e5ab"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <!-- Room interior illustration -->
+  <rect x="100" y="250" width="600" height="20" fill="#2a486c" rx="4"/>
+  <!-- Bed -->
+  <rect x="250" y="270" width="300" height="120" fill="#15263d" rx="8" stroke="url(#gold)" stroke-width="2"/>
+  <rect x="270" y="240" width="120" height="40" fill="#ffffff" opacity="0.9" rx="6"/>
+  <rect x="410" y="240" width="120" height="40" fill="#ffffff" opacity="0.9" rx="6"/>
+  <rect x="250" y="320" width="300" height="70" fill="url(#gold)" opacity="0.85" rx="4"/>
+  <!-- Lamp -->
+  <path d="M 180 200 L 220 200 L 210 240 L 190 240 Z" fill="url(#gold)"/>
+  <rect x="198" y="240" width="4" height="60" fill="#ffffff"/>
+  <circle cx="200" cy="190" r="30" fill="#ffeaa7" opacity="0.3"/>
+  <!-- Window -->
+  <rect x="580" y="100" width="140" height="200" fill="#0f2138" stroke="#2a486c" stroke-width="4" rx="4"/>
+  <line x1="650" y1="100" x2="650" y2="300" stroke="#2a486c" stroke-width="3"/>
+  <line x1="580" y1="200" x2="720" y2="200" stroke="#2a486c" stroke-width="3"/>
+  <!-- Stars outside window -->
+  <circle cx="620" cy="140" r="2" fill="#ffffff"/>
+  <circle cx="680" cy="160" r="1.5" fill="#ffffff"/>
+  <circle cx="640" cy="180" r="2.5" fill="#ffeaa7"/>
+  <!-- Title text -->
+  <text x="400" y="80" text-anchor="middle" fill="url(#gold)" font-family="Playfair Display, Georgia, serif" font-size="28" font-weight="bold">Minabou Hotel — Chambre Confort</text>
+</svg>

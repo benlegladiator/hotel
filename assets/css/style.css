@@ -1,0 +1,699 @@
+/* ============================================================
+   Alma Hotel — Design System 2.0 (Modern, Airy & Elegant)
+   Palette : Pearl #f8fafc · Slate #0f172a · Emerald #059669 · Coral #e11d48 · Indigo #4f46e5
+   Typo    : Plus Jakarta Sans (titres & chiffres) + Inter (corps)
+   ============================================================ */
+
+/* ── 1. Variables & Design Tokens ─────────────────────────── */
+:root {
+    /* Fonds & Surfaces */
+    --bg-app:        #f8fafc;
+    --bg-white:      #ffffff;
+    --bg-card:       #ffffff;
+    --bg-card-hover: #f1f5f9;
+    --bg-muted:      #f1f5f9;
+
+    /* Textes & Contrastes */
+    --text-primary:   #0f172a;
+    --text-secondary: #475569;
+    --text-light:     #94a3b8;
+    --text-white:     #ffffff;
+
+    /* Bordures & Séparateurs */
+    --border-light:  #e2e8f0;
+    --border-mid:    #cbd5e1;
+    --border-focus:  #4f46e5;
+
+    /* Couleurs Thématiques / Actions */
+    --primary:       #4f46e5;  /* Indigo royal */
+    --primary-hover: #4338ca;
+    --primary-light: #eef2ff;
+
+    --gold-600:      #b45309;
+    --gold-500:      #d97706;  /* Ambre chaud */
+    --gold-400:      #f59e0b;
+    --gold-100:      #fef3c7;
+
+    /* Statuts Métier */
+    --s-libre:          #059669;
+    --s-libre-bg:       #ecfdf5;
+    --s-libre-border:   #a7f3d0;
+
+    --s-occupee:        #e11d48;
+    --s-occupee-bg:     #fff1f2;
+    --s-occupee-border: #fecdd3;
+
+    --s-nettoyage:      #4f46e5;
+    --s-nettoyage-bg:   #eef2ff;
+    --s-nettoyage-border:#c7d2fe;
+
+    --s-reservee:       #d97706;
+    --s-reservee-bg:    #fffbeb;
+    --s-reservee-border:#fde68a;
+
+    --s-maintenance:    #64748b;
+    --s-maintenance-bg: #f8fafc;
+    --s-maintenance-border:#cbd5e1;
+
+    /* Layout & Dimensions */
+    --sidebar-w:    270px;
+    --topbar-h:     68px;
+
+    /* Ombres Aérées & Douces */
+    --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 4px 20px rgba(15, 23, 42, 0.05);
+    --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.08);
+    --shadow-xl: 0 20px 48px rgba(15, 23, 42, 0.12);
+
+    /* Arrondis Modernes */
+    --r-sm:   6px;
+    --r-md:   10px;
+    --r-lg:   16px;
+    --r-xl:   22px;
+    --r-full: 9999px;
+
+    --transition: all .2s cubic-bezier(.4, 0, .2, 1);
+}
+
+/* ── 2. Reset & Base ───────────────────────────────────────── */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background: var(--bg-app);
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em;
+}
+
+h1, h2, h3, h4, h5, h6, .page-header-title, .card-title {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+img { max-width: 100%; }
+input, select, textarea, button { font-family: inherit; font-size: inherit; }
+
+/* ── 3. App Layout ─────────────────────────────────────────── */
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+    background: var(--bg-app);
+}
+
+.app-main {
+    flex: 1;
+    margin-left: var(--sidebar-w);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    transition: margin-left .25s ease;
+    background: var(--bg-app);
+}
+.app-main.expanded { margin-left: 0; }
+
+.main-content {
+    flex: 1;
+    padding: 32px 36px 60px;
+}
+
+/* ── 4. Sidebar ────────────────────────────────────────────── */
+.sidebar {
+    position: fixed;
+    left: 0; top: 0;
+    height: 100vh;
+    width: var(--sidebar-w);
+    background: #ffffff;
+    border-right: 1px solid var(--border-light);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1000;
+    transition: transform .25s ease;
+    box-shadow: var(--shadow-sm);
+}
+.sidebar.collapsed { transform: translateX(-100%); }
+
+.sidebar-brand {
+    padding: 26px 24px 22px;
+    border-bottom: 1px solid var(--border-light);
+    flex-shrink: 0;
+}
+.sidebar-hotel-name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.03em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.sidebar-hotel-subtitle {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-top: 4px;
+}
+
+.sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 14px 24px;
+}
+
+.sidebar-footer {
+    padding: 12px 14px;
+    border-top: 1px solid var(--border-light);
+    background: #ffffff;
+    flex-shrink: 0;
+}
+
+.btn-sidebar-logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 11px 16px;
+    background: #dc2626;
+    color: #ffffff !important;
+    border-radius: var(--r-md);
+    font-weight: 700;
+    font-size: 14px;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
+    transition: var(--transition);
+}
+
+.btn-sidebar-logout svg {
+    width: 18px;
+    height: 18px;
+    stroke: #ffffff;
+}
+
+.btn-sidebar-logout:hover {
+    background: #b91c1c;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+    transform: translateY(-1px);
+    color: #ffffff !important;
+}
+
+.sidebar-section-label {
+    padding: 18px 12px 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-light);
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: var(--r-md);
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    transition: var(--transition);
+}
+.sidebar-link svg {
+    width: 19px;
+    height: 19px;
+    flex-shrink: 0;
+    stroke: currentColor;
+}
+.sidebar-link:hover {
+    background: var(--bg-muted);
+    color: var(--text-primary);
+}
+.sidebar-link.active {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 600;
+}
+.sidebar-link.active svg {
+    stroke: var(--primary);
+}
+
+/* ── 5. Topbar ─────────────────────────────────────────────── */
+.topbar {
+    height: var(--topbar-h);
+    background: #ffffff;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 36px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.sidebar-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 6px;
+}
+.sidebar-toggle span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--text-secondary);
+    border-radius: 2px;
+}
+.topbar .page-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg-muted);
+    padding: 6px 14px 6px 8px;
+    border-radius: var(--r-full);
+}
+.user-avatar {
+    width: 34px;
+    height: 34px;
+    background: var(--primary);
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+}
+.user-details {
+    display: flex;
+    flex-direction: column;
+}
+.user-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+.user-role {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+.btn-logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--r-md);
+    color: var(--text-secondary);
+    transition: var(--transition);
+}
+.btn-logout:hover {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+/* ── 6. Cartes & Conteneurs (Anti-serré) ────────────────────── */
+.card {
+    background: var(--bg-card);
+    border-radius: var(--r-lg);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 24px;
+    overflow: hidden;
+    transition: var(--transition);
+}
+.card:hover {
+    box-shadow: var(--shadow-md);
+}
+.card-header {
+    padding: 22px 28px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+}
+.card-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+.card-body {
+    padding: 28px;
+}
+.card-body.p-0 { padding: 0; }
+
+/* ── 7. Tuiles & Métriques (Finances) ──────────────────────── */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+    margin-bottom: 18px;
+}
+.metric-card {
+    background: #ffffff;
+    border-radius: var(--r-md);
+    border: 1px solid var(--border-light);
+    padding: 8px 12px;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.metric-card:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+.metric-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2px;
+}
+.metric-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--text-secondary);
+}
+.metric-value {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.15;
+    margin: 2px 0;
+}
+.metric-sub {
+    font-size: 10.5px;
+    color: var(--text-light);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ── 8. Grands Boutons d'Action Rapide (Tuiles) ─────────────── */
+.action-tiles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+    margin-bottom: 32px;
+}
+.action-tile {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 24px;
+    border-radius: var(--r-lg);
+    color: #ffffff;
+    text-decoration: none;
+    transition: var(--transition);
+    box-shadow: var(--shadow-md);
+}
+.action-tile:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+.action-tile-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+}
+.action-tile-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+.action-tile-desc {
+    font-size: 12.5px;
+    opacity: 0.9;
+    margin-top: 3px;
+}
+
+/* ── 9. Boutons Standards ──────────────────────────────────── */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 18px;
+    font-size: 13.5px;
+    font-weight: 600;
+    border-radius: var(--r-md);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    white-space: nowrap;
+}
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: var(--r-sm);
+}
+.btn-lg {
+    padding: 14px 28px;
+    font-size: 16px;
+    border-radius: var(--r-lg);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: #ffffff;
+}
+.btn-primary:hover {
+    background: var(--primary-hover);
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+}
+
+.btn-success {
+    background: var(--s-libre);
+    color: #ffffff;
+}
+.btn-success:hover {
+    background: #047857;
+    box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
+}
+
+.btn-danger {
+    background: var(--s-occupee);
+    color: #ffffff;
+}
+.btn-danger:hover {
+    background: #be123c;
+    box-shadow: 0 4px 14px rgba(225, 29, 72, 0.3);
+}
+
+.btn-outline {
+    background: #ffffff;
+    border-color: var(--border-mid);
+    color: var(--text-primary);
+}
+.btn-outline:hover {
+    background: var(--bg-muted);
+    border-color: var(--text-light);
+}
+
+.btn-secondary {
+    background: var(--bg-muted);
+    color: var(--text-secondary);
+}
+.btn-secondary:hover {
+    background: var(--border-light);
+    color: var(--text-primary);
+}
+
+/* ── 10. Formulaires & Inputs Aérés ────────────────────────── */
+.form-group {
+    margin-bottom: 20px;
+}
+.form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+.form-input, .form-control, .form-select, .form-textarea {
+    width: 100%;
+    height: 46px;
+    padding: 0 14px;
+    font-size: 14px;
+    color: var(--text-primary);
+    background: #ffffff;
+    border: 1.5px solid var(--border-mid);
+    border-radius: var(--r-md);
+    transition: var(--transition);
+}
+.form-textarea {
+    height: auto;
+    padding: 12px 14px;
+}
+.form-input:focus, .form-control:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+    outline: none;
+}
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+/* ── 11. Tableaux & Listes Spacieuses ──────────────────────── */
+.table-wrapper {
+    overflow-x: auto;
+}
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+.table th {
+    background: #f8fafc;
+    padding: 14px 18px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-light);
+}
+.table td {
+    padding: 16px 18px;
+    font-size: 14px;
+    border-bottom: 1px solid #f1f5f9;
+    color: var(--text-primary);
+    vertical-align: middle;
+}
+.table tbody tr {
+    transition: background-color .15s ease;
+}
+.table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* ── 12. Badges de Statut (Pilules Pastel) ─────────────────── */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: var(--r-full);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+.badge-libre {
+    background: var(--s-libre-bg);
+    color: var(--s-libre);
+    border: 1px solid var(--s-libre-border);
+}
+.badge-occupee {
+    background: var(--s-occupee-bg);
+    color: var(--s-occupee);
+    border: 1px solid var(--s-occupee-border);
+}
+.badge-nettoyage {
+    background: var(--s-nettoyage-bg);
+    color: var(--s-nettoyage);
+    border: 1px solid var(--s-nettoyage-border);
+}
+.badge-reservee {
+    background: var(--s-reservee-bg);
+    color: var(--s-reservee);
+    border: 1px solid var(--s-reservee-border);
+}
+
+/* ── 13. Messages Flash ────────────────────────────────────── */
+.flash {
+    padding: 14px 20px;
+    border-radius: var(--r-md);
+    margin: 0 36px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow-sm);
+}
+.flash-success {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+}
+.flash-error, .flash-danger {
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    color: #9f1239;
+}
+.flash-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.6;
+}
+.flash-close:hover { opacity: 1; }
+
+/* ── 14. Responsive ────────────────────────────────────────── */
+@media (max-width: 900px) {
+    :root {
+        --sidebar-w: 240px;
+    }
+    .app-main { margin-left: 0; }
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main-content { padding: 20px 16px 40px; }
+    .topbar { padding: 0 16px; }
+    .flash { margin: 0 16px 16px; }
+}
