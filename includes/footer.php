@@ -109,6 +109,31 @@ function closeHotelOfflineModal() {
 }
 </script>
 
+<!-- Barre de Navigation Inférieure Mobile (Expérience Native App PWA) -->
+<nav class="mobile-bottom-nav no-print" id="mobileBottomNav">
+    <a href="<?= BASE_URL ?>/dashboard.php" class="<?= (strpos($_SERVER['REQUEST_URI'] ?? '', 'dashboard.php') !== false) ? 'active' : '' ?>">
+        <span style="font-size: 18px;">🏠</span>
+        <span>Accueil</span>
+    </a>
+    <a href="<?= BASE_URL ?>/modules/chambres/list.php" class="<?= (strpos($_SERVER['REQUEST_URI'] ?? '', '/chambres/') !== false) ? 'active' : '' ?>">
+        <span style="font-size: 18px;">🛏️</span>
+        <span>Chambres</span>
+    </a>
+    <div class="mobile-bottom-nav-action">
+        <a href="<?= BASE_URL ?>/modules/checkin_checkout/express_checkin.php" class="mobile-bottom-nav-action-btn" title="Arrivée Express">
+            ⚡
+        </a>
+    </div>
+    <a href="<?= BASE_URL ?>/modules/checkin_checkout/checkout.php" class="<?= (strpos($_SERVER['REQUEST_URI'] ?? '', 'checkout.php') !== false) ? 'active' : '' ?>">
+        <span style="font-size: 18px;">📋</span>
+        <span>Départ</span>
+    </a>
+    <button type="button" onclick="toggleSidebar()" aria-label="Menu complet">
+        <span style="font-size: 18px;">☰</span>
+        <span>Menu</span>
+    </button>
+</nav>
+
 <!-- Bouton Flottant Défiler vers le Haut -->
 <button id="scrollToTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="no-print" title="Défiler vers le haut" style="display:none; position:fixed; bottom:24px; right:24px; z-index:9990; background:var(--gold-500); color:var(--navy-950); border:none; width:44px; height:44px; border-radius:50%; font-size:20px; font-weight:bold; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.3); transition:all 0.3s ease;">
     ↑

@@ -32,10 +32,16 @@ function icon(string $name): string {
 $hotel_name = get_system_setting('nom_hotel', 'Alma Hotel');
 $is_admin   = is_admin();
 ?>
+<!-- Fond sombre au clic pour fermer le menu sur mobile -->
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
 <aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand">
-        <div class="sidebar-hotel-name"><?= h($hotel_name) ?></div>
-        <div class="sidebar-hotel-subtitle"><?= $is_admin ? 'Supervision Patron' : 'Gestion Hôtelière & Caisse' ?></div>
+    <div class="sidebar-brand" style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+            <div class="sidebar-hotel-name"><?= h($hotel_name) ?></div>
+            <div class="sidebar-hotel-subtitle"><?= $is_admin ? 'Supervision Patron' : 'Gestion Hôtelière & Caisse' ?></div>
+        </div>
+        <button type="button" id="sidebarCloseBtn" class="sidebar-close-btn" aria-label="Fermer le menu" style="display:none; background:none; border:none; color:var(--text-secondary); font-size:20px; cursor:pointer; padding:4px;">✕</button>
     </div>
 
     <nav class="sidebar-nav">

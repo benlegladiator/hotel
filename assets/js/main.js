@@ -2,17 +2,56 @@
 // Minabou Hotel — Main JavaScript
 // ============================================================
 
-// ── Sidebar toggle ──────────────────────────────────────────
-const sidebarToggle = document.getElementById('sidebarToggle');
-const sidebar       = document.getElementById('sidebar');
-const appMain       = document.getElementById('appMain');
+// ── Sidebar & Mobile Navigation ───────────────────────────
+const sidebarToggle   = document.getElementById('sidebarToggle');
+const sidebar         = document.getElementById('sidebar');
+const appMain         = document.getElementById('appMain');
+const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
 
-if (sidebarToggle && sidebar) {
-    sidebarToggle.addEventListener('click', () => {
-        sidebar.classList.toggle('collapsed');
-        appMain && appMain.classList.toggle('expanded');
-    });
+function toggleSidebar() {
+    if (window.innerWidth <= 900) {
+        if (!sidebar) return;
+        const isOpen = sidebar.classList.toggle('open');
+        if (sidebarBackdrop) {
+            if (isOpen) {
+                sidebarBackdrop.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Empêcher le scroll en arrière-plan
+            } else {
+                sidebarBackdrop.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+    } else {
+        if (sidebar) sidebar.classList.toggle('collapsed');
+        if (appMain) appMain.classList.toggle('expanded');
+    }
 }
+
+function closeSidebarMobile() {
+    if (sidebar) sidebar.classList.remove('open');
+    if (sidebarBackdrop) sidebarBackdrop.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', toggleSidebar);
+}
+if (sidebarCloseBtn) {
+    sidebarCloseBtn.addEventListener('click', closeSidebarMobile);
+}
+if (sidebarBackdrop) {
+    sidebarBackdrop.addEventListener('click', closeSidebarMobile);
+}
+
+// Fermer le tiroir mobile lorsqu'on clique sur un lien de navigation
+document.querySelectorAll('.sidebar-nav a').forEach(link => {
+    link.addEventListener('click', () => {
+        if (window.innerWidth <= 900) {
+            closeSidebarMobile();
+        }
+    });
+});
 
 // ── Auto-dismiss flash après 5 secondes ─────────────────────
 const flashMsg = document.getElementById('flashMsg');

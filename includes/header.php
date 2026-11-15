@@ -13,7 +13,7 @@ $accent = get_user_accent();
 <html lang="<?= get_user_lang() ?>">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title><?= h($page_title) ?> — <?= h(get_system_setting('nom_hotel', 'Alma Hotel')) ?></title>
     <meta name="description" content="Alma Hotel — Système de gestion hôtelière & caisse">
     <link rel="preconnect" href="https://fonts.googleapis.com">

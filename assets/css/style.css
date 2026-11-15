@@ -685,15 +685,329 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 }
 .flash-close:hover { opacity: 1; }
 
-/* ── 14. Responsive ────────────────────────────────────────── */
+/* ── 14. Responsive Mobile & Expérience App Native ─────────── */
+
+/* ── Barre de Navigation Inférieure Mobile (Bottom Navigation) ── */
+.mobile-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(64px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: #ffffff;
+    border-top: 1px solid var(--border-light);
+    box-shadow: 0 -4px 24px rgba(15, 23, 42, 0.08);
+    z-index: 9990;
+    justify-content: space-around;
+    align-items: center;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.mobile-bottom-nav a,
+.mobile-bottom-nav button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 600;
+    text-decoration: none;
+    flex: 1;
+    height: 100%;
+    cursor: pointer;
+    transition: var(--transition);
+    -webkit-tap-highlight-color: transparent;
+}
+.mobile-bottom-nav a.active,
+.mobile-bottom-nav a:active,
+.mobile-bottom-nav button:active {
+    color: var(--primary);
+}
+.mobile-bottom-nav-action {
+    position: relative;
+    top: -14px;
+    flex: 0 0 auto;
+    padding: 0 6px;
+}
+.mobile-bottom-nav-action-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-500), var(--gold-600));
+    color: #ffffff !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: bold;
+    box-shadow: 0 6px 18px rgba(217, 119, 6, 0.42);
+    border: 3.5px solid #ffffff;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    text-decoration: none;
+}
+.mobile-bottom-nav-action-btn:active {
+    transform: scale(0.92);
+    box-shadow: 0 2px 8px rgba(217, 119, 6, 0.3);
+}
+
+/* ── Fond sombre (Backdrop) du Tiroir Mobile ── */
+.sidebar-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 9998;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+.sidebar-backdrop.active {
+    display: block;
+    opacity: 1;
+}
+
+/* ── Breakpoint Tablette / Petit Écran (max-width: 900px) ── */
 @media (max-width: 900px) {
     :root {
-        --sidebar-w: 240px;
+        --sidebar-w: 280px;
     }
-    .app-main { margin-left: 0; }
-    .sidebar { transform: translateX(-100%); }
-    .sidebar.open { transform: translateX(0); }
-    .main-content { padding: 20px 16px 40px; }
-    .topbar { padding: 0 16px; }
-    .flash { margin: 0 16px 16px; }
+    .app-main { 
+        margin-left: 0 !important; 
+    }
+    .sidebar { 
+        transform: translateX(-100%); 
+        z-index: 10000;
+        box-shadow: 0 0 32px rgba(0, 0, 0, 0.25);
+    }
+    .sidebar.open { 
+        transform: translateX(0); 
+    }
+    .sidebar-close-btn { 
+        display: block !important; 
+    }
+    .main-content { 
+        padding: 20px 16px 40px; 
+    }
+    .topbar { 
+        padding: 0 16px; 
+    }
+    .flash { 
+        margin: 0 16px 16px; 
+    }
+}
+
+/* ── Breakpoint Smartphone & PWA Mobile (max-width: 768px) ── */
+@media (max-width: 768px) {
+    /* Activer la navigation basse */
+    .mobile-bottom-nav {
+        display: flex;
+    }
+    /* Espace de sécurité en bas pour ne pas recouvrir le contenu */
+    .main-content {
+        padding: 16px 14px calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+    }
+
+    /* Topbar compacte & épurée */
+    .topbar {
+        height: 56px;
+        padding: 0 12px;
+    }
+    .topbar-left {
+        gap: 10px;
+        max-width: 60%;
+    }
+    .topbar .page-title {
+        font-size: 15px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .topbar-right {
+        gap: 8px;
+    }
+    .topbar-right .user-details {
+        display: none !important;
+    }
+    .topbar-right .user-info {
+        padding: 2px !important;
+        background: none !important;
+    }
+    .topbar-right a[href*="tab=apparence"] {
+        display: none !important;
+    }
+    #hotelNetStatusBtn {
+        padding: 4px 10px !important;
+        font-size: 11px !important;
+    }
+    #hotelNetPendingBadge {
+        font-size: 9px !important;
+        padding: 1px 4px !important;
+    }
+
+    /* Corps & espacement pour laisser place à la barre inférieure */
+    body {
+        padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+    }
+    .main-content {
+        padding: 14px 12px calc(24px + env(safe-area-inset-bottom, 0px)) 12px !important;
+    }
+
+    /* Formulaires fluides pleine largeur sur mobile (anti-écrasement) */
+    .form-grid-2,
+    .form-grid-3,
+    div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+    }
+
+    /* Réduction du padding excessif des cartes sur smartphone */
+    .card-body,
+    div[style*="padding: 36px"],
+    div[style*="padding: 30px"],
+    div[style*="padding: 28px"],
+    div[style*="padding: 24px"] {
+        padding: 16px !important;
+    }
+    .card-header {
+        padding: 14px 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    /* Inputs confortables (prévention du zoom automatique iOS Safari) */
+    .form-input, .form-control, .form-select, .form-textarea {
+        min-height: 48px;
+        font-size: 16px !important; /* Essentiel pour iOS Safari */
+    }
+
+    /* Tuiles d'action rapide pleine largeur */
+    .action-tiles-grid,
+    .action-tile,
+    .action-card-bordered {
+        padding: 14px 16px !important;
+    }
+
+    /* Tableaux scrollables avec inertie tactile & largeur minimum fluide */
+    .table-wrapper,
+    .table-responsive {
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        border-radius: var(--r-md);
+        box-shadow: inset 0 0 4px rgba(0,0,0,0.03);
+        margin-bottom: 8px;
+    }
+    .table {
+        min-width: 620px;
+    }
+    .table th, .table td {
+        padding: 12px 10px !important;
+        font-size: 12.5px !important;
+        white-space: nowrap;
+    }
+    .table td strong {
+        white-space: normal;
+    }
+
+    /* Toolbars de recherche et de filtres */
+    .table-toolbar,
+    .search-box,
+    .table-toolbar form {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        width: 100% !important;
+        gap: 8px !important;
+    }
+    .table-toolbar form input,
+    .table-toolbar form select,
+    .table-toolbar form button {
+        width: 100% !important;
+    }
+
+    /* Boutons et interactions tactiles */
+    .page-header-actions,
+    div[style*="display: flex; gap: 12px"] {
+        width: 100% !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+    }
+    .page-header-actions .btn,
+    .btn {
+        flex: 1 1 auto;
+        min-height: 42px;
+        justify-content: center;
+    }
+    .btn:active,
+    .action-card-bordered:active,
+    .mobile-bottom-nav a:active,
+    .mobile-bottom-nav button:active {
+        transform: scale(0.97);
+        transition: transform 0.1s ease;
+    }
+
+    /* Bouton remonter au dessus de la barre de navigation */
+    #scrollToTopBtn {
+        bottom: calc(75px + env(safe-area-inset-bottom, 0px)) !important;
+        right: 14px !important;
+        width: 42px !important;
+        height: 42px !important;
+    }
+
+    /* Modal plein écran / Bottom sheet élégant sur mobile */
+    #hotelOfflineModal > div {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 92vh !important;
+        max-height: 92vh !important;
+        border-radius: 20px 20px 0 0 !important;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: 0 !important;
+    }
+    #hotelOfflineModal div[style*="grid-template-columns:repeat(auto-fit"] {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+    }
+
+    /* Défilement fluide sans flash de tap */
+    * {
+        -webkit-tap-highlight-color: transparent;
+    }
+}
+
+/* Grilles 2 colonnes pour tablettes et smartphones moyens (401px - 768px) */
+@media (min-width: 401px) and (max-width: 768px) {
+    .metrics-grid,
+    div[style*="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr))"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+    }
+    .metric-value {
+        font-size: 15px !important;
+    }
+}
+
+/* ── Très petits écrans (max-width: 400px - iPhone SE, Galaxy A) ── */
+@media (max-width: 400px) {
+    .metrics-grid,
+    div[style*="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr))"] {
+        grid-template-columns: 1fr !important;
+    }
+    .topbar .page-title {
+        max-width: 120px;
+    }
 }
