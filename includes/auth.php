@@ -4,7 +4,43 @@
 // ============================================================
 
 if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.cookie_lifetime', 2592000);
+    ini_set('session.gc_maxlifetime', 2592000);
+    if (!headers_sent()) {
+        session_set_cookie_params([
+            'lifetime' => 2592000,
+            'path'     => '/',
+            'httponly' => true,
+            'samesite' => 'Lax'
+        ]);
+    }
     session_start();
+}
+
+// Auto-reconnexion transparente via Cookie Persistant Alma Hotel (90 jours)
+if (empty($_SESSION['user_id']) && !empty($_COOKIE['hotel_remember']) && isset($pdo)) {
+    $cookie_parts = explode(':', $_COOKIE['hotel_remember'], 2);
+    if (count($cookie_parts) === 2) {
+        $c_uid   = intval($cookie_parts[0]);
+        $c_token = $cookie_parts[1];
+        if ($c_uid > 0) {
+            try {
+                $stmt_auto = $pdo->prepare("SELECT * FROM utilisateurs WHERE id = ? AND actif = 1 LIMIT 1");
+                $stmt_auto->execute([$c_uid]);
+                $auto_user = $stmt_auto->fetch();
+                if ($auto_user) {
+                    $expected_token = hash_hmac('sha256', $auto_user['id'] . $auto_user['mot_de_passe'], 'ALMA_HOTEL_SECRET_2026');
+                    if (hash_equals($expected_token, $c_token)) {
+                        session_regenerate_id(true);
+                        $_SESSION['user_id'] = $auto_user['id'];
+                        $_SESSION['nom']     = $auto_user['nom'];
+                        $_SESSION['prenom']  = $auto_user['prenom'];
+                        $_SESSION['role']    = $auto_user['role'];
+                    }
+                }
+            } catch (Throwable $e) {}
+        }
+    }
 }
 
 /** Redirige vers login si non connecté */

@@ -44,6 +44,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['prenom']  = $user['prenom'];
                 $_SESSION['role']    = $user['role'];
 
+                // Cookie persistant automatique 90 jours (anti-déconnexion sur mobile/PWA)
+                $remember_token = hash_hmac('sha256', $user['id'] . $user['mot_de_passe'], 'ALMA_HOTEL_SECRET_2026');
+                setcookie('hotel_remember', $user['id'] . ':' . $remember_token, [
+                    'expires'  => time() + (86400 * 90),
+                    'path'     => '/',
+                    'httponly' => true,
+                    'samesite' => 'Lax',
+                    'secure'   => (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
+                ]);
+
                 header('Location: ' . BASE_URL . '/dashboard.php');
                 exit;
             }
