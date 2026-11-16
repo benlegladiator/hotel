@@ -163,333 +163,280 @@ require_once INCLUDES_PATH . '/header.php';
     </div>
 
     <!-- ========================================================= -->
-    <!-- CAS 1 : TABLEAU DE BORD DU BOSS (STYLE ORANGE MONEY)      -->
+    <!-- CAS 1 : TABLEAU DE BORD DU BOSS (LÉGER, ÉPURÉ, 2 PAR LIGNE) -->
     <!-- ========================================================= -->
     <?php if ($is_boss): 
         $solde_total_tresorerie = ($caisse_boss_total ?? 0) + ($especes_caissieres_total ?? 0);
     ?>
 
-        <!-- ── 1. CARTE HÉRO TRÉSORERIE STYLE "COMPTE PRINCIPAL" ── -->
-        <div class="om-hero-card">
-            <div class="om-hero-top">
-                <div>
-                    <div class="om-hero-tag">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff7900" stroke-width="2.5"><polyline points="7 17 17 7 17 17"/><polyline points="7 7 17 7"/></svg>
-                        <span>Compte Principal &bull; Trésorerie</span>
-                    </div>
-                    <div class="om-hero-amount" id="omHeroAmount">
-                        <?= format_prix($solde_total_tresorerie) ?>
-                    </div>
+        <!-- ── 1. CARTE TRÉSORERIE ÉPURÉE ALMA HOTEL (CLAIR & COMPACT) ── -->
+        <div class="alma-tresorerie-card">
+            <div class="alma-tresorerie-header">
+                <div class="alma-tresorerie-title">
+                    <span>👑</span> <span>Trésorerie Globale &bull; Alma Hotel</span>
                 </div>
-                <div class="om-hero-qr" title="Alma Hotel Pro">
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1e1b4b" stroke-width="2">
-                        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
-                        <circle cx="6.5" cy="6.5" r="1.5" fill="#ff7900"/><circle cx="17.5" cy="6.5" r="1.5" fill="#ff7900"/><circle cx="6.5" cy="17.5" r="1.5" fill="#ff7900"/>
-                    </svg>
-                </div>
+                <button type="button" onclick="toggleOmBalance()" id="omToggleBtn" class="alma-btn-eye">
+                    <span id="omToggleIcon">👁️</span> <span id="omToggleText">Masquer</span>
+                </button>
             </div>
 
-            <button type="button" onclick="toggleOmBalance()" id="omToggleBtn" class="om-btn-toggle-balance">
-                <span id="omToggleText">Masquer le solde</span> <span id="omToggleIcon">👁️</span>
-            </button>
+            <div class="alma-tresorerie-amount" id="omHeroAmount">
+                <?= format_prix($solde_total_tresorerie) ?>
+            </div>
 
-            <div class="om-hero-subaccounts">
-                <div class="om-subaccount-box">
-                    <div class="om-subaccount-title">
-                        <span>👑</span> <span>Caisse Boss (Coffre)</span>
-                    </div>
-                    <div class="om-subaccount-value" id="omSubBoss" style="color: #fde68a;">
-                        <?= format_prix($caisse_boss_total ?? 0) ?>
-                    </div>
+            <div class="alma-tresorerie-pills">
+                <div class="alma-pill-badge" style="border-left: 3px solid #f59e0b;">
+                    <span>👑</span> Coffre Boss : <strong id="omSubBoss" style="color: #b45309;"><?= format_prix($caisse_boss_total ?? 0) ?></strong>
                 </div>
-                <div class="om-subaccount-box">
-                    <div class="om-subaccount-title">
-                        <span>💵</span> <span>Tiroir Guichet</span>
-                    </div>
-                    <div class="om-subaccount-value" id="omSubGuichet">
-                        <?= format_prix($especes_caissieres_total ?? 0) ?>
-                    </div>
+                <div class="alma-pill-badge" style="border-left: 3px solid #10b981;">
+                    <span>💵</span> Espèces Guichet : <strong id="omSubGuichet" style="color: #065f46;"><?= format_prix($especes_caissieres_total ?? 0) ?></strong>
                 </div>
             </div>
         </div>
 
-        <!-- ── 2. BANNIÈRE HORIZONTALE OCCUPATION (STYLE "MES CRÉDITS") ── -->
-        <a href="<?= BASE_URL ?>/modules/chambres/tracabilite.php" class="om-credit-banner">
-            <div class="om-credit-icon">
-                📈
+        <!-- ── 2. BANNIÈRE HORIZONTALE OCCUPATION COMPACTE ── -->
+        <a href="<?= BASE_URL ?>/modules/chambres/tracabilite.php" class="hotel-occupation-bar">
+            <span style="font-size: 20px;">📈</span>
+            <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 13px; font-weight: 800; color: #0f172a;">
+                    Occupation Hôtel : <span style="color: #4f46e5;"><?= $taux_occupation ?>%</span>
+                </div>
+                <div style="font-size: 11px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    <?= $ch_occupees ?>/<?= $total_chambres ?> occupées &bull; <?= $ch_libres ?> libres &bull; <?= $ch_nettoyage ?> en ménage
+                </div>
             </div>
-            <div class="om-credit-info">
-                <div class="om-credit-title">Taux d'Occupation Hôtel : <strong><?= $taux_occupation ?>%</strong></div>
-                <div class="om-credit-subtitle"><?= $ch_occupees ?>/<?= $total_chambres ?> occupées &bull; <?= $ch_libres ?> libres &bull; <?= $ch_nettoyage ?> en ménage</div>
-            </div>
-            <div class="om-credit-arrow">
-                &rsaquo;
-            </div>
+            <span style="font-size: 16px; color: #94a3b8; font-weight: bold;">&rsaquo;</span>
         </a>
 
-        <!-- ── 3. GRILLE DES SERVICES 4 COLONNES (TRICHE ORANGE MONEY) ── -->
-        <div class="om-services-section">
-            <div class="om-section-title">
-                <span>⚡</span> <span>Services & Décisions Direction</span>
-            </div>
-            <div class="om-services-grid">
-                <!-- 1. Arrivée Express -->
-                <a href="<?= BASE_URL ?>/modules/checkin_checkout/express_checkin.php" class="om-service-tile">
-                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #ecfdf5, #d1fae5); border: 1.5px solid #a7f3d0;">
-                        <span>⚡</span>
-                    </div>
-                    <span class="om-tile-label">Arrivée Express</span>
-                </a>
-
-                <!-- 2. Départ Client -->
-                <a href="<?= BASE_URL ?>/modules/checkin_checkout/checkout.php" class="om-service-tile">
-                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 1.5px solid #fde68a;">
-                        <span>📋</span>
-                    </div>
-                    <span class="om-tile-label">Départ Client</span>
-                </a>
-
-                <!-- 3. Caisse Boss -->
-                <a href="<?= BASE_URL ?>/modules/comptabilite/journal.php" class="om-service-tile">
-                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #fff7ed, #ffedd5); border: 1.5px solid #fed7aa;">
-                        <span>👑</span>
-                    </div>
-                    <span class="om-tile-label">Caisse Boss</span>
-                </a>
-
-                <!-- 4. + Dépense Direction -->
-                <a href="<?= BASE_URL ?>/modules/comptabilite/add_depense.php" class="om-service-tile">
-                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #fff1f2, #ffe4e6); border: 1.5px solid #fecdd3;">
-                        <span>💸</span>
-                    </div>
-                    <span class="om-tile-label">+ Dépense</span>
-                </a>
-
-                <!-- 5. Journal Occupations -->
-                <a href="<?= BASE_URL ?>/modules/chambres/tracabilite.php" class="om-service-tile">
-                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 1.5px solid #bbf7d0;">
-                        <span>🏨</span>
-                    </div>
-                    <span class="om-tile-label">Occupations</span>
-                </a>
-
-                <!-- 6. Audit Ménage -->
-                <a href="<?= BASE_URL ?>/modules/menage/tracabilite.php" class="om-service-tile">
-                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #ecfeff, #cffafe); border: 1.5px solid #a5f3fc;">
-                        <span>🧹</span>
-                    </div>
-                    <span class="om-tile-label">Audit Ménage</span>
-                </a>
-
-                <!-- 7. Bilan Employés -->
-                <a href="<?= BASE_URL ?>/modules/rapports/bilan_employes.php" class="om-service-tile">
-                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #eef2ff, #e0e7ff); border: 1.5px solid #c7d2fe;">
-                        <span>👥</span>
-                    </div>
-                    <span class="om-tile-label">Employés</span>
-                </a>
-
-                <!-- 8. Paramètres & CRUD -->
-                <a href="<?= BASE_URL ?>/modules/parametres/gestion.php" class="om-service-tile">
-                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #f8fafc, #f1f5f9); border: 1.5px solid #cbd5e1;">
-                        <span>⚙️</span>
-                    </div>
-                    <span class="om-tile-label">Paramètres</span>
-                </a>
-            </div>
+        <!-- ── 3. ACTIONS RAPIDES : 2 BOUTONS PAR LIGNE (DEMANDÉ PAR L'UTILISATEUR) ── -->
+        <div style="font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
+            ⚡ Opérations Clés (2 par ligne)
         </div>
 
-        <!-- ── 4. FLUX DU JOUR COMPACT (RECETTES VS DÉPENSES) ── -->
-        <div class="om-flux-grid">
-            <div class="om-flux-card" style="border-left: 4px solid #059669;">
-                <div class="om-flux-header">
-                    <span style="font-size: 11px; font-weight: 700; color: #059669;">🟢 ENTRÉES DU JOUR</span>
-                    <span class="om-flux-tag" style="background: #d1fae5; color: #065f46;">Séjours</span>
+        <div class="hotel-action-grid-2">
+            <!-- Ligne 1 : Arrivée & Départ -->
+            <a href="<?= BASE_URL ?>/modules/checkin_checkout/express_checkin.php" class="hotel-action-card-2" style="border-left: 4px solid #10b981;">
+                <div class="hac-icon" style="background: #ecfdf5; color: #059669;">⚡</div>
+                <div class="hac-text">
+                    <div class="hac-title" style="color: #065f46;">Arrivée</div>
+                    <div class="hac-sub">Check-in direct</div>
                 </div>
-                <div class="om-flux-value" style="color: #059669;" id="omFluxEntrees">
-                    <?= format_prix($entrees_today) ?>
-                </div>
-                <div class="om-flux-desc">Paiements perçus aujourd'hui</div>
-            </div>
+            </a>
 
-            <div class="om-flux-card" style="border-left: 4px solid #e11d48;">
-                <div class="om-flux-header">
-                    <span style="font-size: 11px; font-weight: 700; color: #e11d48;">🔴 SORTIES DU JOUR</span>
-                    <span class="om-flux-tag" style="background: #ffe4e6; color: #9f1239;">Charges</span>
+            <a href="<?= BASE_URL ?>/modules/checkin_checkout/checkout.php" class="hotel-action-card-2" style="border-left: 4px solid #f59e0b;">
+                <div class="hac-icon" style="background: #fffbeb; color: #d97706;">📋</div>
+                <div class="hac-text">
+                    <div class="hac-title" style="color: #92400e;">Départ</div>
+                    <div class="hac-sub">Check-out client</div>
                 </div>
-                <div class="om-flux-value" style="color: #e11d48;" id="omFluxSorties">
-                    <?= format_prix($sorties_today) ?>
+            </a>
+
+            <!-- Ligne 2 : Caisse & Nettoyage -->
+            <a href="<?= BASE_URL ?>/modules/comptabilite/journal.php" class="hotel-action-card-2" style="border-left: 4px solid #6366f1;">
+                <div class="hac-icon" style="background: #eef2ff; color: #4f46e5;">💰</div>
+                <div class="hac-text">
+                    <div class="hac-title" style="color: #3730a3;">Caisse</div>
+                    <div class="hac-sub">Journal & Trésorerie</div>
                 </div>
-                <div class="om-flux-desc">Dépenses & achats enregistrés</div>
+            </a>
+
+            <a href="<?= BASE_URL ?>/modules/menage/tracabilite.php" class="hotel-action-card-2" style="border-left: 4px solid #06b6d4;">
+                <div class="hac-icon" style="background: #ecfeff; color: #0891b2;">🧹</div>
+                <div class="hac-text">
+                    <div class="hac-title" style="color: #155e75;">Nettoyage</div>
+                    <div class="hac-sub">Audit ménage</div>
+                </div>
+            </a>
+
+            <!-- Ligne 3 : Occupations & + Dépense -->
+            <a href="<?= BASE_URL ?>/modules/chambres/tracabilite.php" class="hotel-action-card-2" style="border-left: 4px solid #3b82f6;">
+                <div class="hac-icon" style="background: #eff6ff; color: #2563eb;">🏨</div>
+                <div class="hac-text">
+                    <div class="hac-title" style="color: #1e40af;">Occupations</div>
+                    <div class="hac-sub">Suivi chambres</div>
+                </div>
+            </a>
+
+            <a href="<?= BASE_URL ?>/modules/comptabilite/add_depense.php" class="hotel-action-card-2" style="border-left: 4px solid #ef4444;">
+                <div class="hac-icon" style="background: #fef2f2; color: #dc2626;">💸</div>
+                <div class="hac-text">
+                    <div class="hac-title" style="color: #991b1b;">+ Dépense</div>
+                    <div class="hac-sub">Sortie / Achat</div>
+                </div>
+            </a>
+
+            <!-- Ligne 4 : Employés & Paramètres -->
+            <a href="<?= BASE_URL ?>/modules/rapports/bilan_employes.php" class="hotel-action-card-2" style="border-left: 4px solid #8b5cf6;">
+                <div class="hac-icon" style="background: #f5f3ff; color: #7c3aed;">👥</div>
+                <div class="hac-text">
+                    <div class="hac-title" style="color: #5b21b6;">Employés</div>
+                    <div class="hac-sub">Bilan & Caisses</div>
+                </div>
+            </a>
+
+            <a href="<?= BASE_URL ?>/modules/parametres/gestion.php" class="hotel-action-card-2" style="border-left: 4px solid #64748b;">
+                <div class="hac-icon" style="background: #f8fafc; color: #475569;">⚙️</div>
+                <div class="hac-text">
+                    <div class="hac-title" style="color: #1e293b;">Paramètres</div>
+                    <div class="hac-sub">Gestion & CRUD</div>
+                </div>
+            </a>
+        </div>
+
+        <!-- ── 4. FLUX DU JOUR CLAIR ET COMPACT (2 COLONNES) ── -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
+            <div style="background: #ffffff; border-radius: 14px; padding: 12px 14px; border: 1px solid #e2e8f0; border-left: 4px solid #10b981; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+                <div style="font-size: 10.5px; font-weight: 700; color: #059669; text-transform: uppercase;">🟢 Recettes Jour</div>
+                <div style="font-size: 18px; font-weight: 800; color: #065f46; margin: 3px 0 2px;" id="omFluxEntrees"><?= format_prix($entrees_today) ?></div>
+                <div style="font-size: 11px; color: #64748b;">Séjours encaissés</div>
+            </div>
+            <div style="background: #ffffff; border-radius: 14px; padding: 12px 14px; border: 1px solid #e2e8f0; border-left: 4px solid #ef4444; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+                <div style="font-size: 10.5px; font-weight: 700; color: #dc2626; text-transform: uppercase;">🔴 Dépenses Jour</div>
+                <div style="font-size: 18px; font-weight: 800; color: #991b1b; margin: 3px 0 2px;" id="omFluxSorties"><?= format_prix($sorties_today) ?></div>
+                <div style="font-size: 11px; color: #64748b;">Charges & sorties</div>
             </div>
         </div>
 
     <!-- ========================================================= -->
-    <!-- CAS 2 : TABLEAU DE BORD DE LA CAISSIÈRE (STYLE ORANGE MONEY)-->
+    <!-- CAS 2 : TABLEAU DE BORD DE LA CAISSIÈRE (CLAIR, 2 PAR LIGNE)-->
     <!-- ========================================================= -->
     <?php else: ?>
 
-        <!-- ── 1. CARTE HÉRO CAISSE GUICHET ── -->
-        <div class="om-hero-card">
-            <div class="om-hero-top">
-                <div>
-                    <div class="om-hero-tag">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff7900" stroke-width="2.5"><polyline points="7 17 17 7 17 17"/><polyline points="7 7 17 7"/></svg>
-                        <span>Caisse Guichet &bull; Mon Tiroir</span>
-                    </div>
-                    <div class="om-hero-amount" id="omHeroAmount">
-                        <?= format_prix($solde_net_today) ?>
-                    </div>
+        <!-- ── 1. CARTE CAISSE GUICHET ÉPURÉE ALMA HOTEL (CLAIR & COMPACT) ── -->
+        <div class="alma-tresorerie-card">
+            <div class="alma-tresorerie-header">
+                <div class="alma-tresorerie-title">
+                    <span>💵</span> <span>Caisse Guichet &bull; Mon Tiroir</span>
                 </div>
-                <div class="om-hero-qr" title="Alma Hotel Caisse">
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1e1b4b" stroke-width="2">
-                        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
-                        <circle cx="6.5" cy="6.5" r="1.5" fill="#ff7900"/><circle cx="17.5" cy="6.5" r="1.5" fill="#ff7900"/><circle cx="6.5" cy="17.5" r="1.5" fill="#ff7900"/>
-                    </svg>
-                </div>
+                <button type="button" onclick="toggleOmBalance()" id="omToggleBtn" class="alma-btn-eye">
+                    <span id="omToggleIcon">👁️</span> <span id="omToggleText">Masquer</span>
+                </button>
             </div>
 
-            <button type="button" onclick="toggleOmBalance()" id="omToggleBtn" class="om-btn-toggle-balance">
-                <span id="omToggleText">Masquer le solde</span> <span id="omToggleIcon">👁️</span>
-            </button>
+            <div class="alma-tresorerie-amount" id="omHeroAmount">
+                <?= format_prix($solde_net_today) ?>
+            </div>
 
-            <div class="om-hero-subaccounts">
-                <div class="om-subaccount-box">
-                    <div class="om-subaccount-title">
-                        <span>🟢</span> <span>Entrées Séjours</span>
-                    </div>
-                    <div class="om-subaccount-value" id="omSubBoss" style="color: #86efac;">
-                        <?= format_prix($entrees_today) ?>
-                    </div>
+            <div class="alma-tresorerie-pills">
+                <div class="alma-pill-badge" style="border-left: 3px solid #10b981;">
+                    <span>🟢</span> Entrées : <strong id="omSubBoss" style="color: #065f46;"><?= format_prix($entrees_today) ?></strong>
                 </div>
-                <div class="om-subaccount-box">
-                    <div class="om-subaccount-title">
-                        <span>🔴</span> <span>Sorties Justifiées</span>
-                    </div>
-                    <div class="om-subaccount-value" id="omSubGuichet" style="color: #fca5a5;">
-                        <?= format_prix($sorties_today) ?>
-                    </div>
+                <div class="alma-pill-badge" style="border-left: 3px solid #ef4444;">
+                    <span>🔴</span> Sorties : <strong id="omSubGuichet" style="color: #991b1b;"><?= format_prix($sorties_today) ?></strong>
                 </div>
             </div>
         </div>
 
-        <!-- ── 2. BANNIÈRE HORIZONTALE OCCUPATION ── -->
-        <a href="<?= BASE_URL ?>/modules/chambres/list.php" class="om-credit-banner">
-            <div class="om-credit-icon">
-                🛏️
+        <!-- ── 2. BANNIÈRE HORIZONTALE OCCUPATION COMPACTE ── -->
+        <a href="<?= BASE_URL ?>/modules/chambres/list.php" class="hotel-occupation-bar">
+            <span style="font-size: 20px;">🛏️</span>
+            <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 13px; font-weight: 800; color: #0f172a;">
+                    Occupation Chambres : <span style="color: #4f46e5;"><?= $taux_occupation ?>%</span>
+                </div>
+                <div style="font-size: 11px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    <?= $ch_occupees ?>/<?= $total_chambres ?> occupées &bull; <?= $ch_libres ?> chambres prêtes
+                </div>
             </div>
-            <div class="om-credit-info">
-                <div class="om-credit-title">Occupation Chambres : <strong><?= $taux_occupation ?>%</strong></div>
-                <div class="om-credit-subtitle"><?= $ch_occupees ?>/<?= $total_chambres ?> occupées &bull; <?= $ch_libres ?> chambres prêtes</div>
-            </div>
-            <div class="om-credit-arrow">
-                &rsaquo;
-            </div>
+            <span style="font-size: 16px; color: #94a3b8; font-weight: bold;">&rsaquo;</span>
         </a>
 
-        <!-- ── 3. GRILLE DES SERVICES CAISSIÈRE (TRICHE ORANGE MONEY) ── -->
-        <div class="om-services-section">
-            <div class="om-section-title">
-                <span>⚡</span> <span>Opérations Caissière</span>
-            </div>
-            <div class="om-services-grid">
-                <!-- 1. Enregistrer Occupation -->
-                <a href="<?= BASE_URL ?>/modules/checkin_checkout/express_checkin.php" class="om-service-tile">
-                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #ecfdf5, #d1fae5); border: 1.5px solid #a7f3d0;">
-                        <span>⚡</span>
-                    </div>
-                    <span class="om-tile-label">Arrivée Directe</span>
-                </a>
-
-                <!-- 2. Départ Client -->
-                <a href="<?= BASE_URL ?>/modules/checkin_checkout/checkout.php" class="om-service-tile">
-                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 1.5px solid #fde68a;">
-                        <span>📋</span>
-                    </div>
-                    <span class="om-tile-label">Départ Client</span>
-                </a>
-
-                <!-- 3. Sortie Caisse -->
-                <a href="<?= BASE_URL ?>/modules/comptabilite/add_depense.php" class="om-service-tile">
-                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #fff1f2, #ffe4e6); border: 1.5px solid #fecdd3;">
-                        <span>💸</span>
-                    </div>
-                    <span class="om-tile-label">Sortie Caisse</span>
-                </a>
-
-                <!-- 4. Verser au Boss ou Chambres -->
-                <?php if (is_supervisor()): ?>
-                <a href="<?= BASE_URL ?>/modules/comptabilite/transfert_boss.php" class="om-service-tile">
-                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #fff7ed, #ffedd5); border: 1.5px solid #fed7aa;">
-                        <span>👑</span>
-                    </div>
-                    <span class="om-tile-label">Verser Boss</span>
-                </a>
-                <?php else: ?>
-                <a href="<?= BASE_URL ?>/modules/chambres/list.php" class="om-service-tile">
-                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 1.5px solid #bbf7d0;">
-                        <span>🛏️</span>
-                    </div>
-                    <span class="om-tile-label">Chambres</span>
-                </a>
-                <?php endif; ?>
-
-                <!-- 5. Nettoyage -->
-                <a href="<?= BASE_URL ?>/modules/menage/tracabilite.php" class="om-service-tile">
-                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #ecfeff, #cffafe); border: 1.5px solid #a5f3fc;">
-                        <span>🧹</span>
-                    </div>
-                    <span class="om-tile-label">Nettoyage</span>
-                </a>
-
-                <!-- 6. Fichier Clients -->
-                <a href="<?= BASE_URL ?>/modules/clients/list.php" class="om-service-tile">
-                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #eef2ff, #e0e7ff); border: 1.5px solid #c7d2fe;">
-                        <span>👤</span>
-                    </div>
-                    <span class="om-tile-label">Clients</span>
-                </a>
-
-                <!-- 7. Facturation -->
-                <a href="<?= BASE_URL ?>/modules/facturation/list.php" class="om-service-tile">
-                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #fdf4ff, #fae8ff); border: 1.5px solid #f0abfc;">
-                        <span>🧾</span>
-                    </div>
-                    <span class="om-tile-label">Factures</span>
-                </a>
-
-                <!-- 8. Journal Caisse -->
-                <a href="<?= BASE_URL ?>/modules/comptabilite/journal.php" class="om-service-tile">
-                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #f8fafc, #f1f5f9); border: 1.5px solid #cbd5e1;">
-                        <span>📊</span>
-                    </div>
-                    <span class="om-tile-label">Journal</span>
-                </a>
-            </div>
+        <!-- ── 3. ACTIONS RAPIDES : 2 BOUTONS PAR LIGNE (CAISSIÈRE) ── -->
+        <div style="font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
+            ⚡ Opérations Clés (2 par ligne)
         </div>
 
-        <!-- ── 4. FLUX DU JOUR CAISSIÈRE ── -->
-        <div class="om-flux-grid">
-            <div class="om-flux-card" style="border-left: 4px solid #059669;">
-                <div class="om-flux-header">
-                    <span style="font-size: 11px; font-weight: 700; color: #059669;">🟢 ENTRÉES DU JOUR</span>
-                    <span class="om-flux-tag" style="background: #d1fae5; color: #065f46;">Séjours</span>
+        <div class="hotel-action-grid-2">
+            <!-- Ligne 1 : Arrivée & Départ -->
+            <a href="<?= BASE_URL ?>/modules/checkin_checkout/express_checkin.php" class="hotel-action-card-2" style="border-left: 4px solid #10b981;">
+                <div class="hac-icon" style="background: #ecfdf5; color: #059669;">⚡</div>
+                <div class="hac-text">
+                    <div class="hac-title" style="color: #065f46;">Arrivée</div>
+                    <div class="hac-sub">Check-in direct</div>
                 </div>
-                <div class="om-flux-value" style="color: #059669;">
-                    <?= format_prix($entrees_today) ?>
-                </div>
-                <div class="om-flux-desc">Paiements perçus aujourd'hui</div>
-            </div>
+            </a>
 
-            <div class="om-flux-card" style="border-left: 4px solid #e11d48;">
-                <div class="om-flux-header">
-                    <span style="font-size: 11px; font-weight: 700; color: #e11d48;">🔴 DÉPENSES DU JOUR</span>
-                    <span class="om-flux-tag" style="background: #ffe4e6; color: #9f1239;">Charges</span>
+            <a href="<?= BASE_URL ?>/modules/checkin_checkout/checkout.php" class="hotel-action-card-2" style="border-left: 4px solid #f59e0b;">
+                <div class="hac-icon" style="background: #fffbeb; color: #d97706;">📋</div>
+                <div class="hac-text">
+                    <div class="hac-title" style="color: #92400e;">Départ</div>
+                    <div class="hac-sub">Check-out client</div>
                 </div>
-                <div class="om-flux-value" style="color: #e11d48;">
-                    <?= format_prix($sorties_today) ?>
+            </a>
+
+            <!-- Ligne 2 : Caisse & Nettoyage -->
+            <a href="<?= BASE_URL ?>/modules/comptabilite/journal.php" class="hotel-action-card-2" style="border-left: 4px solid #6366f1;">
+                <div class="hac-icon" style="background: #eef2ff; color: #4f46e5;">💰</div>
+                <div class="hac-text">
+                    <div class="hac-title" style="color: #3730a3;">Caisse</div>
+                    <div class="hac-sub">Journal & Soldes</div>
                 </div>
-                <div class="om-flux-desc">Sorties justifiées aujourd'hui</div>
+            </a>
+
+            <a href="<?= BASE_URL ?>/modules/menage/tracabilite.php" class="hotel-action-card-2" style="border-left: 4px solid #06b6d4;">
+                <div class="hac-icon" style="background: #ecfeff; color: #0891b2;">🧹</div>
+                <div class="hac-text">
+                    <div class="hac-title" style="color: #155e75;">Nettoyage</div>
+                    <div class="hac-sub">Suivi propreté</div>
+                </div>
+            </a>
+
+            <!-- Ligne 3 : Sortie Dépense & Verser Boss / Chambres -->
+            <a href="<?= BASE_URL ?>/modules/comptabilite/add_depense.php" class="hotel-action-card-2" style="border-left: 4px solid #ef4444;">
+                <div class="hac-icon" style="background: #fef2f2; color: #dc2626;">💸</div>
+                <div class="hac-text">
+                    <div class="hac-title" style="color: #991b1b;">+ Dépense</div>
+                    <div class="hac-sub">Sortie caisse</div>
+                </div>
+            </a>
+
+            <?php if (is_supervisor()): ?>
+            <a href="<?= BASE_URL ?>/modules/comptabilite/transfert_boss.php" class="hotel-action-card-2" style="border-left: 4px solid #eab308;">
+                <div class="hac-icon" style="background: #fefce8; color: #ca8a04;">👑</div>
+                <div class="hac-text">
+                    <div class="hac-title" style="color: #854d0e;">Verser Boss</div>
+                    <div class="hac-sub">Remise patron</div>
+                </div>
+            </a>
+            <?php else: ?>
+            <a href="<?= BASE_URL ?>/modules/chambres/list.php" class="hotel-action-card-2" style="border-left: 4px solid #3b82f6;">
+                <div class="hac-icon" style="background: #eff6ff; color: #2563eb;">🛏️</div>
+                <div class="hac-text">
+                    <div class="hac-title" style="color: #1e40af;">Chambres</div>
+                    <div class="hac-sub">État & tarifs</div>
+                </div>
+            </a>
+            <?php endif; ?>
+
+            <!-- Ligne 4 : Clients & Factures -->
+            <a href="<?= BASE_URL ?>/modules/clients/list.php" class="hotel-action-card-2" style="border-left: 4px solid #8b5cf6;">
+                <div class="hac-icon" style="background: #f5f3ff; color: #7c3aed;">👤</div>
+                <div class="hac-text">
+                    <div class="hac-title" style="color: #5b21b6;">Clients</div>
+                    <div class="hac-sub">Fichier clients</div>
+                </div>
+            </a>
+
+            <a href="<?= BASE_URL ?>/modules/facturation/list.php" class="hotel-action-card-2" style="border-left: 4px solid #ec4899;">
+                <div class="hac-icon" style="background: #fdf2f8; color: #db2777;">🧾</div>
+                <div class="hac-text">
+                    <div class="hac-title" style="color: #9d174d;">Factures</div>
+                    <div class="hac-sub">Reçus & clôtures</div>
+                </div>
+            </a>
+        </div>
+
+        <!-- ── 4. FLUX DU JOUR CLAIR ET COMPACT (2 COLONNES) ── -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
+            <div style="background: #ffffff; border-radius: 14px; padding: 12px 14px; border: 1px solid #e2e8f0; border-left: 4px solid #10b981; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+                <div style="font-size: 10.5px; font-weight: 700; color: #059669; text-transform: uppercase;">🟢 Recettes Jour</div>
+                <div style="font-size: 18px; font-weight: 800; color: #065f46; margin: 3px 0 2px;"><?= format_prix($entrees_today) ?></div>
+                <div style="font-size: 11px; color: #64748b;">Séjours perçus</div>
+            </div>
+            <div style="background: #ffffff; border-radius: 14px; padding: 12px 14px; border: 1px solid #e2e8f0; border-left: 4px solid #ef4444; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+                <div style="font-size: 10.5px; font-weight: 700; color: #dc2626; text-transform: uppercase;">🔴 Dépenses Jour</div>
+                <div style="font-size: 18px; font-weight: 800; color: #991b1b; margin: 3px 0 2px;"><?= format_prix($sorties_today) ?></div>
+                <div style="font-size: 11px; color: #64748b;">Sorties justifiées</div>
             </div>
         </div>
 

@@ -121,55 +121,37 @@ $is_act_caisse    = (strpos($req_uri, '/comptabilite/') !== false);
 <nav class="mobile-bottom-nav no-print" id="mobileBottomNav">
     <!-- 1. Accueil -->
     <a href="<?= BASE_URL ?>/dashboard.php" class="<?= $is_act_accueil ? 'active' : '' ?>">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            <polyline points="9 22 9 12 15 12 15 22"/>
-        </svg>
+        <span class="nav-icon">🏠</span>
         <span>Accueil</span>
     </a>
 
     <!-- 2. Arrivée -->
     <a href="<?= BASE_URL ?>/modules/checkin_checkout/express_checkin.php" class="<?= $is_act_arrivee ? 'active' : '' ?>">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-            <polyline points="10 17 15 12 10 7"/>
-            <line x1="15" y1="12" x2="3" y2="12"/>
-        </svg>
+        <span class="nav-icon">⚡</span>
         <span>Arrivée</span>
     </a>
 
     <!-- 3. Départ -->
     <a href="<?= BASE_URL ?>/modules/checkin_checkout/checkout.php" class="<?= $is_act_depart ? 'active' : '' ?>">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-            <polyline points="16 17 21 12 16 7"/>
-            <line x1="21" y1="12" x2="9" y2="12"/>
-        </svg>
+        <span class="nav-icon">📋</span>
         <span>Départ</span>
     </a>
 
     <!-- 4. Nettoyage -->
     <a href="<?= BASE_URL ?>/modules/menage/tracabilite.php" class="<?= $is_act_nettoyage ? 'active' : '' ?>">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-        </svg>
+        <span class="nav-icon">🧹</span>
         <span>Nettoyage</span>
     </a>
 
     <!-- 5. Caisse -->
     <a href="<?= BASE_URL ?>/modules/comptabilite/journal.php" class="<?= $is_act_caisse ? 'active' : '' ?>">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="4" width="20" height="16" rx="2"/>
-            <line x1="2" y1="10" x2="22" y2="10"/>
-            <circle cx="7" cy="15" r="1.5"/>
-            <circle cx="17" cy="15" r="1.5"/>
-        </svg>
+        <span class="nav-icon">💰</span>
         <span>Caisse</span>
     </a>
 </nav>
 
 <!-- Bouton Flottant Défiler vers le Haut -->
-<button id="scrollToTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="no-print" title="Défiler vers le haut" style="display:none; position:fixed; bottom:24px; right:24px; z-index:9990; background:var(--gold-500); color:var(--navy-950); border:none; width:44px; height:44px; border-radius:50%; font-size:20px; font-weight:bold; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.3); transition:all 0.3s ease;">
+<button id="scrollToTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="no-print" title="Défiler vers le haut" style="display:none; position:fixed; bottom:74px; right:16px; z-index:9990; background:var(--gold-500); color:var(--navy-950); border:none; width:40px; height:40px; border-radius:50%; font-size:18px; font-weight:bold; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.25); transition:all 0.3s ease;">
     ↑
 </button>
 
