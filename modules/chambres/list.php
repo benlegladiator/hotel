@@ -72,7 +72,49 @@ require_once INCLUDES_PATH . '/header.php';
         </div>
     </div>
     
-    <div class="table-wrapper">
+    <!-- ── VUE MOBILE CARTE RESPONSIVE (POUR SMARTPHONE) ── -->
+    <div class="mobile-only room-cards-container" style="padding: 12px; gap: 12px;">
+        <?php if (empty($chambres)): ?>
+            <div style="text-align: center; padding: 30px; color: #94a3b8;">Aucune chambre trouvée.</div>
+        <?php else: ?>
+            <?php foreach ($chambres as $chambre): ?>
+                <div class="card" style="margin-bottom: 12px; border: 1px solid #e2e8f0; border-radius: 14px; padding: 14px; background: #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 44px; height: 44px; border-radius: 10px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; border: 1px solid #e2e8f0;">
+                                🛏️
+                            </div>
+                            <div>
+                                <strong style="font-size: 16px; color: #0f172a;">Chambre <?= h($chambre['numero']) ?></strong>
+                                <div style="font-size: 12px; color: #4f46e5; font-weight: 700;"><?= h($chambre['type_nom']) ?></div>
+                            </div>
+                        </div>
+                        <div>
+                            <?= status_badge($chambre['statut']) ?>
+                        </div>
+                    </div>
+                    <div style="background: #f8fafc; border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; font-size: 12px; color: #475569; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
+                        <span>🌙 Nuit : <strong><?= format_money($chambre['prix_nuit']) ?></strong></span>
+                        <span>⚡ Sieste : <strong><?= format_money($chambre['prix_sieste'] ?? 10000) ?></strong></span>
+                        <span>🏢 <?= $chambre['etage'] > 0 ? 'Étage ' . h($chambre['etage']) : 'RDC / Boucaro' ?></span>
+                    </div>
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap;" class="no-print">
+                        <?php if ($chambre['statut'] === 'nettoyage'): ?>
+                            <a href="<?= BASE_URL ?>/modules/menage/quick_clean.php?id_chambre=<?= $chambre['id'] ?>" class="btn btn-sm" style="background:#10b981; color:#fff; font-weight:700; border-radius:8px; padding:6px 12px; flex: 1 1 auto; text-align: center;" onclick="return confirm('Confirmez-vous que vous avez nettoyé la Chambre <?= $chambre['numero'] ?> ?');">
+                                ✔ Marquer Propre
+                            </a>
+                        <?php endif; ?>
+                        <a href="history.php?id=<?= $chambre['id'] ?>" class="btn btn-sm btn-outline" style="border-radius: 8px; flex: 1 1 auto; text-align: center;">📜 Historique</a>
+                        <a href="edit.php?id=<?= $chambre['id'] ?>" class="btn btn-sm btn-secondary" style="border-radius: 8px; flex: 1 1 auto; text-align: center;">Modifier</a>
+                        <a href="process_delete.php?id=<?= $chambre['id'] ?>" class="btn btn-sm btn-danger" style="border-radius: 8px;" onclick="return confirm('Confirmer la suppression de la chambre ?')">🗑</a>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+
+    <!-- ── VUE TABLEAU DESKTOP (POUR ÉCRANS LARGES) ── -->
+    <div class="table-wrapper desktop-only">
         <table class="table">
             <thead>
                 <tr>

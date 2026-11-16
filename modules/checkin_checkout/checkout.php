@@ -82,7 +82,7 @@ require_once '../../includes/header.php';
     <!-- ── En-tête de page ── -->
     <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;" class="page-header">
         <div>
-            <h1 style="font-size: 24px; font-weight: 800; color: var(--text-primary); margin: 0; line-height: 1.2;">
+            <h1 style="font-size: 22px; font-weight: 800; color: var(--text-primary); margin: 0; line-height: 1.25; word-break: break-word;">
                 📋 Départs Clients & Clôture (Check-out)
             </h1>
             <p style="color: var(--text-secondary); margin-top: 6px; font-size: 13.5px;">
@@ -257,7 +257,78 @@ require_once '../../includes/header.php';
                 </a>
             </div>
         <?php else: ?>
-            <div class="table-responsive">
+            <!-- ── VUE MOBILE CARTE OCCUPATIONS (SMARTPHONE) ── -->
+            <div class="mobile-only" style="padding: 12px; gap: 12px;">
+                <?php foreach ($occupations as $occ): 
+                    $nuits = max(1, nb_nuits($occ['date_arrivee'], $occ['date_depart']));
+                    $prix_unit = $occ['type_reservation'] === 'chambre' ? (float)$occ['prix_nuit'] : (float)$occ['salle_prix'];
+                    $montant_sejour = $nuits * $prix_unit;
+                    $total_cmd = (float)$occ['total_commandes'];
+                    $total_occ = $montant_sejour + $total_cmd;
+                    $is_today = ($occ['date_depart'] === $today);
+                    $is_late  = ($occ['date_depart'] < $today);
+                    $is_sieste_occ = ($occ['type_reservation'] === 'chambre') && ((stripos($occ['remarques'] ?? '', 'sieste') !== false) || ($occ['date_arrivee'] === $occ['date_depart']));
+                ?>
+                    <div class="card" style="margin-bottom: 14px; border: 1.5px solid <?= $is_late ? '#fda4af' : '#e2e8f0' ?>; border-radius: 14px; padding: 14px; background: #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="width: 42px; height: 42px; border-radius: 10px; background: #fff1f2; color: #e11d48; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; border: 1px solid #fecdd3; flex-shrink: 0;">
+                                    <?= h($occ['chambre_numero'] ?? 'S') ?>
+                                </div>
+                                <div>
+                                    <strong style="font-size: 15px; color: #0f172a;"><?= $occ['type_reservation'] === 'chambre' ? 'Chambre ' . h($occ['chambre_numero']) : 'Salle ' . h($occ['salle_nom']) ?></strong>
+                                    <div style="font-size: 12px; color: #64748b;"><?= h($occ['type_chambre'] ?? 'Standard') ?></div>
+                                </div>
+                            </div>
+                            <div>
+                                <?php if ($is_late): ?>
+                                    <span style="background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 800;">⚠️ Dépassé</span>
+                                <?php elseif ($is_today): ?>
+                                    <span style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 800;">📅 Aujourd'hui</span>
+                                <?php else: ?>
+                                    <span style="background: #eef2ff; color: #4f46e5; border: 1px solid #c7d2fe; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 800;">En cours</span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <div style="background: #f8fafc; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 12.5px;">
+                            <div style="font-weight: 700; color: #0f172a; margin-bottom: 4px;">👤 <?= h($occ['nom'] . ' ' . $occ['prenom']) ?> <?= $occ['telephone'] ? '('.h($occ['telephone']).')' : '' ?></div>
+                            <div style="color: #64748b; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px; font-size: 12px;">
+                                <span>Arrivée : <?= format_date($occ['date_arrivee']) ?></span>
+                                <span>Départ : <?= format_date($occ['date_depart']) ?> (<?= $nuits ?> <?= $nuits > 1 ? 'nuits' : 'nuit' ?>)</span>
+                            </div>
+                            <div style="margin-top: 6px; font-weight: 800; color: #059669; font-size: 13px;">
+                                Total : <?= format_prix($total_occ) ?>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;" class="no-print">
+                            <?php if ($is_sieste_occ): ?>
+                                <a href="bascule_sieste.php?id=<?= $occ['res_id'] ?>" class="btn btn-sm" style="background: #fffbeb; color: #b45309; border: 1.5px solid #fde68a; font-weight: 700; flex: 1 1 auto; text-align: center; border-radius: 8px;">
+                                    🌙 En Nuitée
+                                </a>
+                            <?php endif; ?>
+                            
+                            <form method="POST" action="process_checkout.php" onsubmit="return confirm('Confirmez-vous le départ de <?= addslashes(h($occ['nom'].' '.$occ['prenom'])) ?> (Ch. <?= addslashes(h($occ['chambre_numero'])) ?>) ? La chambre passera automatiquement en statut Nettoyage.');" style="margin: 0; flex: 2 1 auto;">
+                                <input type="hidden" name="id_reservation" value="<?= $occ['res_id'] ?>">
+                                <input type="hidden" name="id_client" value="<?= $occ['client_id'] ?>">
+                                <input type="hidden" name="montant_total" value="<?= $total_occ ?>">
+                                
+                                <button type="submit" class="btn btn-sm btn-primary" style="width: 100%; font-weight: 800; border-radius: 8px; justify-content: center; padding: 8px 12px;">
+                                    🚪 Valider Départ
+                                </button>
+                            </form>
+
+                            <a href="checkout.php?id=<?= $occ['res_id'] ?>" class="btn btn-sm btn-outline" style="border-radius: 8px; padding: 8px 12px;" title="Détails">
+                                🔍
+                            </a>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- ── VUE TABLEAU DESKTOP ── -->
+            <div class="table-responsive desktop-only">
                 <table class="table" style="margin: 0;">
                     <thead>
                         <tr>

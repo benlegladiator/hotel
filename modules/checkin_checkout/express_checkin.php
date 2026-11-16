@@ -79,8 +79,8 @@ require_once '../../includes/header.php';
     </div>
 
     <!-- En-tête de page -->
-    <div style="margin-bottom: 24px;">
-        <h1 style="font-size: 24px; font-weight: 800; color: var(--text-primary); margin: 0; line-height: 1.2;">🏨 Arrivée Client & Encaissement Express</h1>
+    <div style="margin-bottom: 20px;">
+        <h1 style="font-size: 22px; font-weight: 800; color: var(--text-primary); margin: 0; line-height: 1.25; word-break: break-word;">🏨 Arrivée Client & Encaissement Express</h1>
         <p style="color: var(--text-secondary); margin-top: 6px; font-size: 13.5px;">Enregistrez un client et son paiement en quelques secondes sur une seule page aérée.</p>
     </div>
 

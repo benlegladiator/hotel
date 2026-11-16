@@ -137,7 +137,7 @@ require_once '../../includes/header.php';
     <!-- ── En-tête Titre & Actions ── -->
     <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;" class="page-header">
         <div>
-            <h1 style="font-size: 24px; font-weight: 800; color: var(--text-primary); margin: 0; line-height: 1.2;">
+            <h1 style="font-size: 22px; font-weight: 800; color: var(--text-primary); margin: 0; line-height: 1.25; word-break: break-word;">
                 📊 Journal Général de Caisse & Traçabilité
             </h1>
             <p style="color: var(--text-secondary); margin-top: 6px; font-size: 13.5px;">
