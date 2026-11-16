@@ -132,18 +132,20 @@ require_once '../../includes/header.php';
                 <strong><?= format_date($date_debut) ?></strong> au <strong><?= format_date($date_fin) ?></strong>.
             </p>
         </div>
-        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;" class="page-header-actions">
             <a href="print_journal.php?periode=<?= urlencode($filtre_periode) ?>&date_debut=<?= urlencode($date_debut) ?>&date_fin=<?= urlencode($date_fin) ?>&id_user=<?= $id_user ?>&type_flux=<?= urlencode($type_flux) ?>" target="_blank" class="btn btn-primary" style="box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);">
                 <span>🖨️</span> Imprimer Bilan A4
             </a>
-            <a href="transfert_boss.php" class="btn" style="background:#d97706; color:#ffffff; font-weight:700; box-shadow: 0 4px 14px rgba(217, 119, 6, 0.3);">
-                <span>👑</span> Verser au Boss
-            </a>
+            <?php if (!is_admin()): ?>
+                <a href="transfert_boss.php" class="btn" style="background:#d97706; color:#ffffff; font-weight:700; box-shadow: 0 4px 14px rgba(217, 119, 6, 0.3);">
+                    <span>👑</span> Verser au Boss
+                </a>
+            <?php endif; ?>
             <a href="add_depense.php" class="btn btn-danger">
                 <span>💸</span> + Dépense
             </a>
             <a href="<?= BASE_URL ?>/dashboard.php" class="btn btn-outline">
-                ← Retour Dashboard
+                ← Retour
             </a>
         </div>
     </div>

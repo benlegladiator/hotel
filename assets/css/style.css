@@ -1012,6 +1012,52 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
     }
 }
 
+/* Bouton Retour Universel dans la Topbar */
+.btn-topbar-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(79, 70, 229, 0.08);
+    color: var(--primary, #4f46e5);
+    border: 1.5px solid rgba(79, 70, 229, 0.2);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    line-height: 1;
+    flex-shrink: 0;
+}
+.btn-topbar-back:hover {
+    background: var(--primary, #4f46e5);
+    color: #ffffff;
+}
+.btn-topbar-back:active {
+    transform: scale(0.95);
+}
+@media (max-width: 600px) {
+    .btn-topbar-back {
+        padding: 6px 8px;
+    }
+    .btn-topbar-back .back-text {
+        font-size: 12px;
+    }
+}
+@media (max-width: 420px) {
+    .btn-topbar-back .back-text {
+        display: none;
+    }
+    .btn-topbar-back {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        justify-content: center;
+        border-radius: 50%;
+    }
+}
+
 /* Animation d'apparition du volet d'installation PWA */
 @keyframes hotelSlideUp {
     from {

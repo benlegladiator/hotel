@@ -42,9 +42,26 @@ $accent = get_user_accent();
         <!-- ── Barre supérieure ── -->
         <header class="topbar">
             <div class="topbar-left">
-                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Ouvrir/fermer menu">
-                    <span></span><span></span><span></span>
-                </button>
+                <?php 
+                $curr_script = basename($_SERVER['PHP_SELF'] ?? '');
+                $is_dashboard = ($curr_script === 'dashboard.php' || $curr_script === 'index.php');
+                if (!$is_dashboard): 
+                ?>
+                    <button type="button" onclick="if(window.history.length > 1) { window.history.back(); } else { window.location.href='<?= BASE_URL ?>/dashboard.php'; }" class="btn-topbar-back" aria-label="Retour" title="Page précédente">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                        <span class="back-text">Retour</span>
+                    </button>
+                    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Ouvrir/fermer menu" style="padding:6px 8px;">
+                        <span></span><span></span><span></span>
+                    </button>
+                <?php else: ?>
+                    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Ouvrir/fermer menu">
+                        <span></span><span></span><span></span>
+                    </button>
+                <?php endif; ?>
                 <span class="page-title"><?= h($page_title) ?></span>
             </div>
             <div class="topbar-right">

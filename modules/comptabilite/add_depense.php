@@ -21,7 +21,7 @@ require_once '../../includes/header.php';
             <h1 style="font-size: 26px; font-weight: 800; color: #e11d48; margin: 0;">💸 Sortie de Caisse / Dépense Directe</h1>
             <p style="color: var(--text-secondary); margin-top: 4px; font-size: 14px;">Enregistrez les achats quotidiens (savon, eau, ampoules, maintenance) qui diminuent la caisse.</p>
         </div>
-        <a href="<?= BASE_URL ?>/dashboard.php" class="btn btn-outline">← Retour Dashboard</a>
+        <a href="<?= BASE_URL ?>/dashboard.php" class="btn btn-outline">← Retour</a>
     </div>
 
     <!-- ── Suggestions Rapides en 1 Clic ── -->
@@ -29,7 +29,11 @@ require_once '../../includes/header.php';
         <div class="card-body" style="padding: 20px 24px;">
             <div style="font-size: 13px; font-weight: 700; color: var(--text-secondary); margin-bottom: 12px;">⚡ Motifs Fréquents (Cliquez pour remplir automatiquement) :</div>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <button type="button" class="btn btn-sm" onclick="setMotif('Versement Espèces au Patron / Caisse Boss', 'versement_patron')" style="background:#fef3c7; border:1.5px solid #fde68a; color:#b45309; border-radius:20px; font-weight:800;">👑 Versement au Boss (Patron)</button>
+                <?php if (!is_admin()): ?>
+                    <button type="button" class="btn btn-sm" onclick="setMotif('Versement Espèces au Patron / Caisse Boss', 'versement_patron')" style="background:#fef3c7; border:1.5px solid #fde68a; color:#b45309; border-radius:20px; font-weight:800;">👑 Versement au Boss (Patron)</button>
+                <?php else: ?>
+                    <button type="button" class="btn btn-sm" onclick="setMotif('Prélèvement Personnel Direction', 'autre')" style="background:#fef3c7; border:1.5px solid #fde68a; color:#b45309; border-radius:20px; font-weight:800;">👑 Prélèvement Patron</button>
+                <?php endif; ?>
                 <button type="button" class="btn btn-sm" onclick="setMotif('Achat Savon & Détergents', 'nettoyage')" style="background:#fff1f2; border:1.5px solid #fecdd3; color:#e11d48; border-radius:20px; font-weight:700;">🧼 Achat Savon</button>
                 <button type="button" class="btn btn-sm" onclick="setMotif('Paiement Facture Eau / Ravitaillement', 'facture')" style="background:#eff6ff; border:1.5px solid #bfdbfe; color:#1d4ed8; border-radius:20px; font-weight:700;">💧 Payer l'Eau</button>
                 <button type="button" class="btn btn-sm" onclick="setMotif('Achat Ampoules / Petit Matériel', 'materiel')" style="background:#fffbeb; border:1.5px solid #fde68a; color:#b45309; border-radius:20px; font-weight:700;">💡 Ampoules / Matériel</button>
@@ -58,7 +62,9 @@ require_once '../../includes/header.php';
                 <div class="form-group">
                     <label class="form-label" for="categorie">Catégorie</label>
                     <select id="categorie" name="categorie" class="form-select" style="height:50px;">
-                        <option value="versement_patron">👑 Versement au Patron (Caisse Boss)</option>
+                        <?php if (!is_admin()): ?>
+                            <option value="versement_patron">👑 Versement au Patron (Caisse Boss)</option>
+                        <?php endif; ?>
                         <option value="nettoyage">🧹 Produits d'Entretien (Savon, Javel...)</option>
                         <option value="facture">💧 Eau / Électricité / Services</option>
                         <option value="maintenance">🛠️ Maintenance & Réparations</option>

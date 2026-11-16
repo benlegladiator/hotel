@@ -72,7 +72,7 @@ $hotel_nom = get_system_setting('nom_hotel', 'Alma Hotel');
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>window.HOTEL_BASE_URL = '<?= BASE_URL ?>';</script>
-    <script src="<?= BASE_URL ?>/assets/js/hotel-offline-sync.js"></script>
+    <script src="<?= BASE_URL ?>/assets/js/hotel-offline-sync.js?v=<?= time() ?>"></script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -614,6 +614,31 @@ $hotel_nom = get_system_setting('nom_hotel', 'Alma Hotel');
 </div>
 
 <script>
+// Gestion de l'installation PWA intégrée
+let deferredHotelPwaPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    deferredHotelPwaPrompt = e;
+    var btn = document.querySelector('.btn-pwa-install');
+    if (btn) btn.style.display = 'inline-flex';
+});
+
+function triggerHotelPwaInstall() {
+    if (deferredHotelPwaPrompt) {
+        deferredHotelPwaPrompt.prompt();
+        deferredHotelPwaPrompt.userChoice.then(function(choice) {
+            deferredHotelPwaPrompt = null;
+        });
+    } else {
+        var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+            alert("Pour installer Alma Hotel sur iPhone / iPad :\n1. Appuyez sur le bouton Partager (⎋) en bas de Safari.\n2. Choisissez 'Sur l'écran d'accueil' ➕.");
+        } else {
+            alert("Pour installer Alma Hotel :\n1. Ouvrez le menu de votre navigateur (les 3 points ⋮ en haut à droite).\n2. Choisissez 'Installer l'application' ou 'Ajouter à l'écran d'accueil'.");
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const passInput = document.getElementById('mot_de_passe');
     const toggleBtn = document.getElementById('togglePasswordBtn');
