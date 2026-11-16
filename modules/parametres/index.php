@@ -34,7 +34,6 @@ require_once '../../includes/header.php';
     <button class="tab-btn <?= $active_tab==='apparence'?'active':'' ?>" onclick="showTab('apparence')">🎨 Thème & Couleurs</button>
     <?php if (is_admin()): ?>
     <button class="tab-btn <?= $active_tab==='hotel'?'active':'' ?>" onclick="showTab('hotel')">🏨 Établissement & Impression</button>
-    <button class="tab-btn <?= $active_tab==='notifications'?'active':'' ?>" onclick="showTab('notifications')">📲 Alertes WhatsApp & Cloche</button>
     <button class="tab-btn <?= $active_tab==='premium'?'active':'' ?>" onclick="showTab('premium')">🌟 Modules Premium</button>
     <?php endif; ?>
 </div>
@@ -199,77 +198,7 @@ require_once '../../includes/header.php';
     </div>
 </div>
 
-<!-- 4. Onglet Alertes WhatsApp & Cloche Sonore Boss -->
-<div id="tab-notifications" class="tab-pane <?= $active_tab==='notifications'?'active':'' ?>">
-    <div class="card mb-4" style="border:2px solid #25D366;">
-        <div class="card-header" style="background:#075E54; color:#ffffff; display:flex; justify-content:space-between; align-items:center;">
-            <h3 class="card-title" style="color:#ffffff; margin:0;">📲 Configuration des Notifications WhatsApp & Cloche Sonore (Boss)</h3>
-            <span style="font-size:12px; background:#25D366; color:#075E54; padding:3px 8px; border-radius:12px; font-weight:800;">Temps Réel</span>
-        </div>
-        <div class="card-body">
-            <p style="margin-bottom:20px; line-height:1.6; color:#334155;">
-                Configurez le numéro WhatsApp privé de la Direction pour recevoir immédiatement une alerte à chaque <strong>Nouvelle Arrivée (Séjour)</strong> et chaque <strong>Entrée / Sortie de Caisse</strong>.
-            </p>
-
-            <form action="process_save.php" method="POST">
-                <input type="hidden" name="section" value="notifications">
-
-                <div class="form-grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
-                    <div>
-                        <label class="form-label" style="font-weight:700;">Numéro WhatsApp du Boss (avec indicatif pays) *</label>
-                        <input type="text" name="boss_whatsapp_number" class="form-control" value="<?= h(get_system_setting('boss_whatsapp_number', '237691670626')) ?>" placeholder="Ex: 237691670626" required>
-                        <small class="text-secondary">Format international sans le signe +, ex: <code>237691670626</code> pour le Cameroun.</small>
-                    </div>
-
-                    <div>
-                        <label class="form-label" style="font-weight:700;">Test Rapide de Réception</label><br>
-                        <?php 
-                        $test_link = get_boss_whatsapp_link("🔔 Test d'alerte Alma Hotel réussi ! Les notifications vers votre WhatsApp sont opérationnelles."); 
-                        ?>
-                        <a href="<?= $test_link ?>" target="_blank" class="btn" style="background:#25D366; color:#ffffff; font-weight:700; display:inline-flex; align-items:center; gap:8px; padding:9px 16px; border-radius:8px; text-decoration:none;">
-                            📲 Envoyer un Message Test WhatsApp
-                        </a>
-                    </div>
-                </div>
-
-                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px; margin-bottom:24px;">
-                    <h4 style="font-size:14px; font-weight:800; color:#0f172a; margin-top:0; margin-bottom:12px;">Événements à notifier :</h4>
-                    
-                    <label style="display:flex; align-items:center; gap:10px; margin-bottom:10px; cursor:pointer;">
-                        <input type="checkbox" name="boss_notify_checkin" value="1" <?= get_system_setting('boss_notify_checkin', '1') === '1' ? 'checked' : '' ?>>
-                        <span style="font-size:13px; font-weight:600; color:#1e293b;">🔔 Cloche sonore et notification lors d'une <strong>Nouvelle Arrivée / Occupation</strong></span>
-                    </label>
-
-                    <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
-                        <input type="checkbox" name="boss_notify_caisse" value="1" <?= get_system_setting('boss_notify_caisse', '1') === '1' ? 'checked' : '' ?>>
-                        <span style="font-size:13px; font-weight:600; color:#1e293b;">💰 Cloche sonore et notification lors d'un <strong>Encaissement de Caisse</strong></span>
-                    </label>
-                </div>
-
-                <details style="background:#ffffff; border:1px solid #cbd5e1; border-radius:12px; padding:14px; margin-bottom:24px;">
-                    <summary style="font-weight:700; color:#475569; cursor:pointer;">⚙️ Options Avancées : Passerelle API WhatsApp (Automatique sans clic)</summary>
-                    <div style="margin-top:14px; font-size:12px; color:#64748b;">
-                        Si vous possédez un compte de passerelle WhatsApp (UltraMsg, Green API, etc.), vous pouvez renseigner ci-dessous l'URL et le Token pour l'envoi 100% automatique en tâche de fond.
-                    </div>
-                    <div class="form-grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:12px;">
-                        <div>
-                            <label class="form-label" style="font-size:12px;">URL API Webhook / Passerelle</label>
-                            <input type="url" name="boss_whatsapp_api_url" class="form-control" value="<?= h(get_system_setting('boss_whatsapp_api_url', '')) ?>" placeholder="https://api.ultramsg.com/instance/messages/chat">
-                        </div>
-                        <div>
-                            <label class="form-label" style="font-size:12px;">Token d'Authentification API</label>
-                            <input type="text" name="boss_whatsapp_api_token" class="form-control" value="<?= h(get_system_setting('boss_whatsapp_api_token', '')) ?>" placeholder="Votre token secret">
-                        </div>
-                    </div>
-                </details>
-
-                <button type="submit" class="btn btn-primary" style="font-weight:700;">💾 Enregistrer les Paramètres d'Alerte</button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- 5. Onglet Modules Premium -->
+<!-- 4. Onglet Modules Premium -->
 <div id="tab-premium" class="tab-pane <?= $active_tab==='premium'?'active':'' ?>">
     <div class="card mb-4" style="border:2px solid var(--gold-500);">
         <div class="card-header" style="background:var(--navy-800); color:var(--gold-400);">

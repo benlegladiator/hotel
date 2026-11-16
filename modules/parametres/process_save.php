@@ -98,16 +98,6 @@ if ($section === 'profil') {
     $msg = ($enable === '1') ? 'Mode Premium activé : Les modules Spa, Restauration et Salles sont désormais visibles.' : 'Mode Standard activé : Interface épurée axée sur l\'occupation et le ménage.';
     set_flash('success', $msg);
     redirect('index.php?tab=premium');
-
-} elseif ($section === 'notifications' && is_admin()) {
-    set_system_setting('boss_whatsapp_number', post('boss_whatsapp_number', '237691670626'));
-    set_system_setting('boss_whatsapp_api_url', post('boss_whatsapp_api_url', ''));
-    set_system_setting('boss_whatsapp_api_token', post('boss_whatsapp_api_token', ''));
-    set_system_setting('boss_notify_checkin', post('boss_notify_checkin', '1'));
-    set_system_setting('boss_notify_caisse', post('boss_notify_caisse', '1'));
-
-    set_flash('success', 'Configuration des alertes WhatsApp et de la cloche sonore enregistrée.');
-    redirect('index.php?tab=notifications');
 }
 
 redirect('index.php');
