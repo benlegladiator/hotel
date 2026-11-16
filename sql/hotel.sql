@@ -280,7 +280,7 @@ ON DUPLICATE KEY UPDATE `valeur` = VALUES(`valeur`);
 CREATE TABLE IF NOT EXISTS IF NOT EXISTS `sorties_caisse` (
   `id`                  INT AUTO_INCREMENT PRIMARY KEY,
   `libelle`             VARCHAR(255) NOT NULL,
-  `categorie`           ENUM('fourniture','nettoyage','maintenance','materiel','facture','autre') NOT NULL DEFAULT 'fourniture',
+  `categorie`           ENUM('fourniture','nettoyage','maintenance','materiel','facture','versement_patron','prelevement_patron','autre') NOT NULL DEFAULT 'fourniture',
   `montant`             DECIMAL(12,2) NOT NULL,
   `date_sortie`         DATE NOT NULL,
   `mode_paiement`       ENUM('especes','carte','mobile','autre') NOT NULL DEFAULT 'especes',

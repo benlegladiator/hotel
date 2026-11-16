@@ -19,6 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $reference_recu = post('reference_recu');
     $notes          = post('notes');
     $user_id        = (int)(current_user()['id'] ?? 1);
+    // Si l'administrateur enregistre un versement remis par une réceptionniste spécifique
+    if (is_admin() && !empty($_POST['id_utilisateur_remettant'])) {
+        $user_id = (int)$_POST['id_utilisateur_remettant'];
+    }
 
     if ($categorie === 'versement_patron' && !is_supervisor()) {
         set_flash('error', "Seul le Chef de Réception ou la Direction peut enregistrer un versement au Boss.");
@@ -35,6 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($categorie === 'versement_patron') {
             set_flash('success', "👑 Versement au Patron de " . format_prix($montant) . " enregistré avec succès. Le reçu de décharge est prêt.");
+        } elseif ($categorie === 'prelevement_patron') {
+            set_flash('success', "👑 Prélèvement Patron de " . format_prix($montant) . " enregistré. La somme a été retirée de la trésorerie active.");
         } else {
             set_flash('success', "💸 Sortie de caisse de " . format_prix($montant) . " pour « $libelle » enregistrée avec succès.");
         }

@@ -40,7 +40,7 @@ require_once '../../includes/header.php';
                 <?php if (!is_admin()): ?>
                     <button type="button" class="btn btn-sm" onclick="setMotif('Versement Espèces au Patron / Caisse Boss', 'versement_patron')" style="background:#fef3c7; border:1.5px solid #fde68a; color:#b45309; border-radius:20px; font-weight:800; font-size:12px; padding:5px 12px;">👑 Versement au Boss (Patron)</button>
                 <?php else: ?>
-                    <button type="button" class="btn btn-sm" onclick="setMotif('Prélèvement Personnel Direction', 'autre')" style="background:#fef3c7; border:1.5px solid #fde68a; color:#b45309; border-radius:20px; font-weight:800; font-size:12px; padding:5px 12px;">👑 Prélèvement Patron</button>
+                    <button type="button" class="btn btn-sm" onclick="setMotif('Prélèvement Personnel Direction / Retrait Coffre', 'prelevement_patron')" style="background:#fef3c7; border:1.5px solid #fde68a; color:#b45309; border-radius:20px; font-weight:800; font-size:12px; padding:5px 12px;">👑 Prélèvement Patron</button>
                 <?php endif; ?>
                 <button type="button" class="btn btn-sm" onclick="setMotif('Achat Savon & Détergents', 'nettoyage')" style="background:#fff1f2; border:1.5px solid #fecdd3; color:#e11d48; border-radius:20px; font-weight:700; font-size:12px; padding:5px 12px;">🧼 Achat Savon</button>
                 <button type="button" class="btn btn-sm" onclick="setMotif('Paiement Facture Eau / Ravitaillement', 'facture')" style="background:#eff6ff; border:1.5px solid #bfdbfe; color:#1d4ed8; border-radius:20px; font-weight:700; font-size:12px; padding:5px 12px;">💧 Payer l'Eau</button>
@@ -70,7 +70,9 @@ require_once '../../includes/header.php';
                 <div class="form-group">
                     <label class="form-label" for="categorie">Catégorie</label>
                     <select id="categorie" name="categorie" class="form-select" style="height:50px;">
-                        <?php if (!is_admin()): ?>
+                        <?php if (is_admin()): ?>
+                            <option value="prelevement_patron">👑 Prélèvement Patron (Retrait Coffre Personnel)</option>
+                        <?php else: ?>
                             <option value="versement_patron">👑 Versement au Patron (Caisse Boss)</option>
                         <?php endif; ?>
                         <option value="nettoyage">🧹 Produits d'Entretien (Savon, Javel...)</option>

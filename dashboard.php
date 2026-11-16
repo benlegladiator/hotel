@@ -34,25 +34,73 @@ $solde_net_today = $entrees_today - $sorties_today;
 
 // ── 2. Statistiques Trésorerie Globale (Spécifique Boss) ─────
 if ($is_boss) {
-    // Total récupéré en Caisse du Boss (tous les versements patron)
-    $caisse_boss_total = (float)$pdo->query("
+    // Total versements remis au Boss par les réceptionnistes
+    $total_versements_boss = (float)$pdo->query("
         SELECT COALESCE(SUM(montant), 0) FROM sorties_caisse 
         WHERE categorie = 'versement_patron'
     ")->fetchColumn();
 
-    // Total toutes recettes séjours historiques
-    $total_recettes_all = (float)$pdo->query("
-        SELECT COALESCE(SUM(montant_final), 0) FROM factures 
-        WHERE statut_paiement IN ('payee', 'partielle')
+    // Total retraits personnels effectués par le Boss (sorties privées / prélèvements patron)
+    $total_retraits_boss = (float)$pdo->query("
+        SELECT COALESCE(SUM(montant), 0) FROM sorties_caisse 
+        WHERE categorie = 'prelevement_patron' 
+           OR (id_utilisateur = 1 AND (categorie = 'autre' OR libelle LIKE '%prélèvement%' OR libelle LIKE '%retrait patron%'))
     ")->fetchColumn();
 
-    // Total toutes sorties de caisse historiques
-    $total_sorties_all = (float)$pdo->query("
-        SELECT COALESCE(SUM(montant), 0) FROM sorties_caisse
-    ")->fetchColumn();
+    // Solde net physique du Coffre du Boss
+    $caisse_boss_total = max(0, $total_versements_boss - $total_retraits_boss);
 
-    // Espèces actuellement dans les tiroirs-caisses des employées
-    $especes_caissieres_total = max(0, $total_recettes_all - $total_sorties_all);
+    // Décomposition précise par réceptionniste (Qui détient combien actuellement ?)
+    $stmt_rep = $pdo->query("
+        SELECT 
+            u.id, 
+            u.nom, 
+            u.prenom, 
+            u.role,
+            u.identifiant,
+            COALESCE(rec.total_encaisse, 0) as total_encaisse,
+            COALESCE(rec_today.today_encaisse, 0) as today_encaisse,
+            COALESCE(dep.total_depenses, 0) as total_depenses,
+            COALESCE(vers.total_verse_boss, 0) as total_verse_boss
+        FROM utilisateurs u
+        LEFT JOIN (
+            SELECT id_receptionniste, SUM(montant_final) as total_encaisse 
+            FROM factures 
+            WHERE statut_paiement IN ('payee', 'partielle') 
+            GROUP BY id_receptionniste
+        ) rec ON rec.id_receptionniste = u.id
+        LEFT JOIN (
+            SELECT id_receptionniste, SUM(montant_final) as today_encaisse 
+            FROM factures 
+            WHERE statut_paiement IN ('payee', 'partielle') AND date_emission = CURDATE()
+            GROUP BY id_receptionniste
+        ) rec_today ON rec_today.id_receptionniste = u.id
+        LEFT JOIN (
+            SELECT id_utilisateur, SUM(montant) as total_depenses 
+            FROM sorties_caisse 
+            WHERE categorie NOT IN ('versement_patron', 'prelevement_patron')
+            GROUP BY id_utilisateur
+        ) dep ON dep.id_utilisateur = u.id
+        LEFT JOIN (
+            SELECT id_utilisateur, SUM(montant) as total_verse_boss 
+            FROM sorties_caisse 
+            WHERE categorie = 'versement_patron'
+            GROUP BY id_utilisateur
+        ) vers ON vers.id_utilisateur = u.id
+        WHERE u.actif = 1 AND (u.role IN ('receptionniste', 'chef_receptionniste') OR rec.total_encaisse > 0)
+        ORDER BY u.nom ASC
+    ");
+
+    $receptionnistes_treso = [];
+    $especes_caissieres_total = 0;
+    while ($r = $stmt_rep->fetch()) {
+        $r_solde_main = max(0, (float)$r['total_encaisse'] - (float)$r['total_depenses'] - (float)$r['total_verse_boss']);
+        $r['solde_en_main'] = $r_solde_main;
+        $especes_caissieres_total += $r_solde_main;
+        $receptionnistes_treso[] = $r;
+    }
+
+    $solde_total_tresorerie = $caisse_boss_total + $especes_caissieres_total;
 }
 
 // ── 3. Statut des Chambres & Taux d'Occupation ───────────────
@@ -180,8 +228,9 @@ require_once INCLUDES_PATH . '/header.php';
                 </button>
             </div>
 
-            <div class="alma-tresorerie-amount" id="omHeroAmount">
-                <?= format_prix($solde_total_tresorerie) ?>
+            <div class="alma-tresorerie-amount" id="omHeroAmount" onclick="toggleTresoDetails()" style="cursor: pointer; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;" title="Cliquez pour afficher la répartition par réceptionniste">
+                <span><?= format_prix($solde_total_tresorerie) ?></span>
+                <span style="font-size: 11.5px; font-weight: 700; color: #4f46e5; text-decoration: underline;">(Voir répartition ▾)</span>
             </div>
 
             <div class="alma-tresorerie-pills">
@@ -190,6 +239,86 @@ require_once INCLUDES_PATH . '/header.php';
                 </div>
                 <div class="alma-pill-badge" style="border-left: 3px solid #10b981;">
                     <span>💵</span> Espèces Guichet : <strong id="omSubGuichet" style="color: #065f46;"><?= format_prix($especes_caissieres_total ?? 0) ?></strong>
+                </div>
+            </div>
+
+            <!-- ── Bouton / Accordéon de Répartition par Réceptionniste ── -->
+            <div onclick="toggleTresoDetails()" id="btnToggleTreso" style="margin-top: 10px; padding: 8px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; transition: all 0.2s ease;">
+                <div style="font-size: 12px; font-weight: 700; color: #334155; display: flex; align-items: center; gap: 6px;">
+                    <span>👥</span> <span>Qui détient combien ? Répartition Réceptionnistes</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 11px; color: #64748b; font-weight: 600;"><?= count($receptionnistes_treso) ?> employés</span>
+                    <span id="tresoChevron" style="font-size: 11px; color: #4f46e5; transition: transform 0.25s ease;">▼</span>
+                </div>
+            </div>
+
+            <!-- ── Volet Dépliable : Détail par Réceptionniste ── -->
+            <div id="tresoDetailsContent" style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1.5px dashed #e2e8f0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <div style="font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800; color: #64748b;">
+                        💵 Espèces physiques actuellement en caisse :
+                    </div>
+                    <a href="<?= BASE_URL ?>/modules/rapports/bilan_employes.php" style="font-size: 11px; color: #4f46e5; font-weight: 700;">
+                        Bilan complet &rsaquo;
+                    </a>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <?php if (empty($receptionnistes_treso)): ?>
+                        <div style="text-align: center; padding: 15px; color: #94a3b8; font-size: 12px;">Aucun employé enregistré.</div>
+                    <?php else: ?>
+                        <?php foreach ($receptionnistes_treso as $rep): 
+                            $has_cash = ($rep['solde_en_main'] > 0);
+                            $initials = strtoupper(mb_substr($rep['prenom'] ?? '', 0, 1) . mb_substr($rep['nom'] ?? '', 0, 1));
+                        ?>
+                            <div style="background: <?= $has_cash ? '#ffffff' : '#f8fafc' ?>; border: 1.5px solid <?= $has_cash ? '#bbf7d0' : '#e2e8f0' ?>; border-radius: 12px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; box-shadow: <?= $has_cash ? '0 2px 6px rgba(16,185,129,0.06)' : 'none' ?>;">
+                                
+                                <div style="display: flex; align-items: center; gap: 10px; min-width: 130px;">
+                                    <div style="width: 34px; height: 34px; border-radius: 50%; background: <?= $has_cash ? '#ecfdf5' : '#f1f5f9' ?>; color: <?= $has_cash ? '#059669' : '#64748b' ?>; font-weight: 800; font-size: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid <?= $has_cash ? '#a7f3d0' : '#cbd5e1' ?>; flex-shrink: 0;">
+                                        <?= $initials ?>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 13.5px; font-weight: 800; color: #0f172a;">
+                                            <?= h($rep['prenom'] . ' ' . $rep['nom']) ?>
+                                        </div>
+                                        <div style="font-size: 11px; color: #64748b;">
+                                            <?= $rep['role'] === 'chef_receptionniste' ? 'Chef Réception' : 'Réceptionniste' ?>
+                                            &bull; Total Prod: <?= format_prix($rep['total_encaisse']) ?>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div style="text-align: right;">
+                                        <div class="rep-cash-amount" style="font-size: 14.5px; font-weight: 800; color: <?= $has_cash ? '#059669' : '#94a3b8' ?>;" data-real="<?= format_prix($rep['solde_en_main']) ?>">
+                                            <?= format_prix($rep['solde_en_main']) ?>
+                                        </div>
+                                        <div style="font-size: 9.5px; font-weight: 700; color: <?= $has_cash ? '#059669' : '#94a3b8' ?>; text-transform: uppercase;">
+                                            <?= $has_cash ? '● En tiroir' : 'À jour (0 F)' ?>
+                                        </div>
+                                    </div>
+
+                                    <?php if ($has_cash): ?>
+                                        <a href="<?= BASE_URL ?>/modules/comptabilite/transfert_boss.php?id_user=<?= $rep['id'] ?>&montant=<?= (int)$rep['solde_en_main'] ?>" class="btn btn-sm" style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a; border-radius: 8px; font-weight: 800; font-size: 11px; padding: 4px 8px; white-space: nowrap;" title="Encaisser les espèces détenues par <?= h($rep['prenom']) ?>">
+                                            👑 Encaisser
+                                        </a>
+                                    <?php endif; ?>
+                                </div>
+
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Prélèvement Personnel Patron / Sortie du Coffre -->
+                <div style="margin-top: 10px; padding: 8px 12px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                    <div style="font-size: 11px; color: #92400e; line-height: 1.3;">
+                        <strong>👑 Retrait Patron :</strong> Enregistrez vos prélèvements personnels pour sortir l'argent de la plateforme vers vos dépenses privées.
+                    </div>
+                    <a href="<?= BASE_URL ?>/modules/comptabilite/add_depense.php" class="btn btn-sm" style="background: #d97706; color: #ffffff; font-weight: 800; border-radius: 8px; font-size: 11px; padding: 4px 10px; white-space: nowrap;">
+                        💸 Retirer / Sortir Somme
+                    </a>
                 </div>
             </div>
         </div>
@@ -629,27 +758,57 @@ function toggleOmBalance() {
     const guichetEl = document.getElementById('omSubGuichet');
     const btnText   = document.getElementById('omToggleText');
     const btnIcon   = document.getElementById('omToggleIcon');
+    const repAmounts = document.querySelectorAll('.rep-cash-amount');
 
     if (isOmBalanceHidden) {
-        if (heroEl) heroEl.textContent = '***** FCFA';
+        if (heroEl) {
+            heroEl.innerHTML = '***** FCFA <span style="font-size: 11.5px; font-weight: 700; color: #4f46e5; text-decoration: underline;">(Voir répartition ▾)</span>';
+        }
         if (bossEl) bossEl.textContent = '***** FCFA';
         if (guichetEl) guichetEl.textContent = '***** FCFA';
-        if (btnText) btnText.textContent = 'Afficher le solde';
+        repAmounts.forEach(el => el.textContent = '***** FCFA');
+        if (btnText) btnText.textContent = 'Afficher';
         if (btnIcon) btnIcon.textContent = '👁️';
         localStorage.setItem('alma_om_balance_hidden', 'true');
     } else {
-        if (heroEl) heroEl.textContent = realOmHeroAmount;
+        if (heroEl) {
+            heroEl.innerHTML = realOmHeroAmount + ' <span style="font-size: 11.5px; font-weight: 700; color: #4f46e5; text-decoration: underline;">(Voir répartition ▾)</span>';
+        }
         if (bossEl) bossEl.textContent = realOmSubBoss;
         if (guichetEl) guichetEl.textContent = realOmSubGuichet;
-        if (btnText) btnText.textContent = 'Masquer le solde';
+        repAmounts.forEach(el => el.textContent = el.getAttribute('data-real') || '0 FCFA');
+        if (btnText) btnText.textContent = 'Masquer';
         if (btnIcon) btnIcon.textContent = '👁️';
         localStorage.removeItem('alma_om_balance_hidden');
+    }
+}
+
+// ── Bascule Volet Répartition Trésorerie par Réceptionniste ──
+function toggleTresoDetails() {
+    const content = document.getElementById('tresoDetailsContent');
+    const chevron = document.getElementById('tresoChevron');
+    if (!content) return;
+    const isCurrentlyOpen = (content.style.display === 'block');
+    if (isCurrentlyOpen) {
+        content.style.display = 'none';
+        if (chevron) chevron.style.transform = 'rotate(0deg)';
+        localStorage.setItem('alma_treso_breakdown_open', '0');
+    } else {
+        content.style.display = 'block';
+        if (chevron) chevron.style.transform = 'rotate(180deg)';
+        localStorage.setItem('alma_treso_breakdown_open', '1');
     }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     if (localStorage.getItem('alma_om_balance_hidden') === 'true') {
         toggleOmBalance();
+    }
+    if (localStorage.getItem('alma_treso_breakdown_open') === '1') {
+        const content = document.getElementById('tresoDetailsContent');
+        const chevron = document.getElementById('tresoChevron');
+        if (content) content.style.display = 'block';
+        if (chevron) chevron.style.transform = 'rotate(180deg)';
     }
 });
 </script>
