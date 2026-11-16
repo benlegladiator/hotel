@@ -189,6 +189,7 @@ if (selectAll) {
         bellDropdown.style.display = isOpen ? 'none' : 'block';
         if (!isOpen) {
             markAllBossBellRead();
+            checkBossNotifications(); // Chargement uniquement à la demande lors du clic !
         }
     };
 
@@ -215,25 +216,6 @@ if (selectAll) {
             if (!data.success || !data.items) return;
 
             bellBtn.setAttribute('data-latest-id', data.latest_id);
-
-            // Vérifier s'il y a du nouveau
-            if (data.latest_id && data.latest_id !== 'none' && data.latest_id !== lastKnownId) {
-                if (!isInitialCheck) {
-                    // Jouer le carillon sonore pour le Boss !
-                    if (typeof window.playHotelSuccessSound === 'function') {
-                        window.playHotelSuccessSound();
-                    }
-                }
-                if (bellBadge) {
-                    bellBadge.textContent = data.count > 0 ? data.count : '!';
-                    bellBadge.style.display = 'inline-block';
-                }
-                if (isInitialCheck) {
-                    lastKnownId = data.latest_id;
-                    localStorage.setItem('alma_last_boss_notif_id', lastKnownId);
-                    isInitialCheck = false;
-                }
-            }
 
             // Mettre à jour la liste dans le dropdown
             if (bellList) {
@@ -263,7 +245,10 @@ if (selectAll) {
         } catch(e) {}
     }
 
-    // Première vérification immédiate puis toutes les 25 secondes
-    checkBossNotifications();
-    setInterval(checkBossNotifications, 25000);
+    // Déclenchement sonore immédiat au clic de soumission d'une arrivée ou opération
+    document.addEventListener('submit', function() {
+        if (typeof window.playHotelSuccessSound === 'function') {
+            window.playHotelSuccessSound();
+        }
+    });
 })();

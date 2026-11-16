@@ -227,7 +227,7 @@ try {
     notify_boss_whatsapp("Nouvelle Arrivée Encaissée", $wa_details, (float)$montant_paye);
 
     set_flash('success', "🎉 Client $nom $prenom installé en Chambre {$chambre['numero']} ($remarque_sejour) ! Encaissement de " . format_prix($montant_paye) . " enregistré.");
-    redirect(BASE_URL . "/modules/facturation/print.php?id=$id_facture");
+    redirect(BASE_URL . "/modules/facturation/print.php?id=$id_facture&auto_wa=1");
 
 } catch (Exception $e) {
     if ($pdo->inTransaction()) $pdo->rollBack();

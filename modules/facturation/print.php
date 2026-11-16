@@ -124,6 +124,21 @@ $num_facture = "#F-" . str_pad($facture['id'], 4, '0', STR_PAD_LEFT);
     <a href="<?= $wa_link ?>" target="_blank" class="btn" style="background:#25D366; color:#fff; font-weight:700; border-radius:6px; padding:10px 18px; text-decoration:none; display:inline-flex; align-items:center; gap:6px;" title="Envoyer au Boss sur WhatsApp">
         📲 Notifier le Boss sur WhatsApp
     </a>
+    <?php if (isset($_GET['auto_wa']) && $_GET['auto_wa'] == '1'): ?>
+    <script>
+    // Envoi automatique sans clic vers WhatsApp
+    window.addEventListener('DOMContentLoaded', function() {
+        const waLink = <?= json_encode($wa_link) ?>;
+        if (waLink) {
+            if (window.history.replaceState) {
+                const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?id=<?= (int)$facture['id'] ?>';
+                window.history.replaceState({path: cleanUrl}, '', cleanUrl);
+            }
+            window.open(waLink, '_blank');
+        }
+    });
+    </script>
+    <?php endif; ?>
     <button onclick="window.print()" class="btn btn-primary" style="font-weight:700;">🖨️ Imprimer la Facture A4</button>
     <a href="print_ticket.php?id=<?= $facture['id'] ?>" class="btn" style="background:#b45309; color:#fff; font-weight:700; border-radius:6px; padding:10px 18px; text-decoration:none;">🧾 Format Ticket de Caisse (80mm)</a>
     <a href="<?= BASE_URL ?>/modules/checkin_checkout/express_checkin.php" class="btn" style="background:#059669; color:#fff; font-weight:700; border-radius:6px; padding:10px 18px; text-decoration:none;">+ Nouvelle Arrivée</a>
