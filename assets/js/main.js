@@ -110,64 +110,123 @@ if (selectAll) {
 // ============================================================
 (function() {
     let audioCtx = null;
-    function getAudioContext() {
-        if (!audioCtx) {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (AudioContext) audioCtx = new AudioContext();
-        }
-        if (audioCtx && audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-        return audioCtx;
+    const b64Click = "data:audio/wav;base64,UklGRgQCAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YeABAACA1PbTgjEOLHjH7tiSRBckYq7h4K1kKh1DhsbhzJFPJilXlsvbwIdNKzBalMTVwI5YNDFRg7TOx6JxRjRBaJa8yrqTZ0Q5SW2XucS3lm5NPkdkiau+u6SBYElEU3CRrbq0n4BiTklUbImks7SmjXJbTk9edY6ksK+ijXVgVFJcboOYp6ynmYZyYVdXX26AkqCop56Pf25hW1tjcH+Om6Kkn5WHemxjXl9mcH2JlJygn5mQhXpvZ2NiZm12gIqTmZybmJGJgHhwamdmaG1ze4KJkJWYmJaTjYeAenRvbGpqbG9zeH6DiI2Qk5SUk5CNiYSAfHh0cW9ubm5wcnV4fH+ChYiLjY+QkJCPjo2LiIaDgX99enh3dXRzcnJycnN0dXZ3eHp7fX6AgIKDhIWHh4iJioqKi4uLi4uLi4uKioqKiYmJiIiHh4eGhoaGhYWFhYSEhISEhISEg4ODg4SEhISEhISEhIWFhYWFhYaGhoaGhoeHh4eHh4eHh4aGhoaFhYWEhIOCgoGAgIB/f359fXx8e3t7e3t7e3t8fH1+f3+AgIGCg4OEhISFhISEg4OCgYCAf359fXx8fHx9fX5/gICBgoKDg4SDg4KCgYCAf359fX19fX5/gICBgoKDg4OCgYE=";
+    let fallbackAudio = null;
+
+    function unlockAudio() {
+        try {
+            if (!audioCtx) {
+                const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioCtxClass) audioCtx = new AudioCtxClass();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        } catch(e) {}
     }
 
-    // Son de clic doux (Tap subtil et luxueux 35ms)
+    // Déverrouiller le contexte audio dès le premier geste tactile
+    ['touchstart', 'touchend', 'pointerdown', 'mousedown', 'click'].forEach(evt => {
+        document.addEventListener(evt, unlockAudio, { passive: true, once: true });
+    });
+
+    // Son de clic / tap tactile net et bien audible
     window.playHotelTapSound = function() {
         try {
-            const ctx = getAudioContext();
-            if (!ctx) return;
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(650, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.035);
-            gain.gain.setValueAtTime(0.12, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.035);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start();
-            osc.stop(ctx.currentTime + 0.035);
+            unlockAudio();
+            if (audioCtx) {
+                const playOsc = function() {
+                    try {
+                        const now = audioCtx.currentTime;
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+
+                        // Onde triangulaire riche (audible sur haut-parleur mobile)
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(880, now); // La5 (880Hz)
+                        osc.frequency.exponentialRampToValueAtTime(340, now + 0.055); // Descente vers 340Hz
+
+                        // Volume franc et net (0.4) avec décroissance rapide (55ms)
+                        gain.gain.setValueAtTime(0.4, now);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.055);
+
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+
+                        osc.start(now);
+                        osc.stop(now + 0.06);
+                    } catch(err) {
+                        playFallback();
+                    }
+                };
+
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume().then(playOsc).catch(() => playFallback());
+                } else {
+                    playOsc();
+                }
+                return;
+            }
         } catch(e) {}
+
+        playFallback();
     };
+
+    function playFallback() {
+        try {
+            if (!fallbackAudio) {
+                fallbackAudio = new Audio(b64Click);
+                fallbackAudio.volume = 0.6;
+            }
+            fallbackAudio.currentTime = 0;
+            fallbackAudio.play().catch(() => {});
+        } catch(e) {}
+    }
 
     // Son de carillon de succès / Cloche d'encaissement (Chime)
     window.playHotelSuccessSound = function() {
         try {
-            const ctx = getAudioContext();
-            if (!ctx) return;
-            const now = ctx.currentTime;
-            [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(freq, now + i * 0.09);
-                gain.gain.setValueAtTime(0.15, now + i * 0.09);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.09 + 0.28);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start(now + i * 0.09);
-                osc.stop(now + i * 0.09 + 0.28);
-            });
+            unlockAudio();
+            if (!audioCtx) return;
+            const playChime = function() {
+                const now = audioCtx.currentTime;
+                [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + i * 0.09);
+                    gain.gain.setValueAtTime(0.25, now + i * 0.09);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.09 + 0.28);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + i * 0.09);
+                    osc.stop(now + i * 0.09 + 0.28);
+                });
+            };
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume().then(playChime);
+            } else {
+                playChime();
+            }
         } catch(e) {}
     };
 
-    // Émettre un tap sonore au clic sur tout élément cliquable
-    document.addEventListener('click', function(e) {
-        const btn = e.target.closest('button, .btn, .mobile-bottom-nav a, .mandel-bottom-nav a, .hotel-action-card-2, .mandel-action-card-2, .nav-tab, .sidebar-nav a, a.badge');
-        if (btn) {
+    // Émettre un tap sonore instantané sur tout bouton ou élément cliquable
+    let lastSoundTime = 0;
+    function handleSoundTrigger(e) {
+        const now = Date.now();
+        if (now - lastSoundTime < 80) return; // Évite double déclenchement pointerdown + click
+
+        const interactive = e.target.closest('button, .btn, .mobile-bottom-nav a, .hotel-action-card-2, .hotel-occupation-bar, .alma-tresorerie-card, .alma-btn-eye, .nav-tab, .sidebar-nav a, a.badge, .room-cards-container .card, .occupations-cards-mobile .card, input[type="submit"], input[type="button"], a[href]');
+        if (interactive) {
+            lastSoundTime = now;
             playHotelTapSound();
         }
-    }, true);
+    }
+
+    // Déclenchement dès le contact tactile (0ms de latence) + au clic souris
+    document.addEventListener('pointerdown', handleSoundTrigger, { passive: true });
+    document.addEventListener('click', handleSoundTrigger, true);
 })();
 
 // ============================================================
