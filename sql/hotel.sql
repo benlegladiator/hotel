@@ -1,39 +1,14 @@
 -- ============================================================
--- Minabou Hotel — Schéma Base de Données MySQL (Enrichi)
+-- Alma Hotel — Schéma Base de Données MySQL
 -- Encodage : utf8mb4 | Moteur : InnoDB
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS `minabou_hotel`
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
-
-USE `minabou_hotel`;
-
 SET FOREIGN_KEY_CHECKS = 0;
-
-DROP TABLE IF EXISTS `parametres_systeme`;
-DROP TABLE IF EXISTS `historique_occupation`;
-DROP TABLE IF EXISTS `taches_menage`;
-DROP TABLE IF EXISTS `factures`;
-DROP TABLE IF EXISTS `commande_lignes`;
-DROP TABLE IF EXISTS `commandes`;
-DROP TABLE IF EXISTS `reservations`;
-DROP TABLE IF EXISTS `menu_items`;
-DROP TABLE IF EXISTS `menus_cuisine`;
-DROP TABLE IF EXISTS `catalogue_services`;
-DROP TABLE IF EXISTS `personnel`;
-DROP TABLE IF EXISTS `clients`;
-DROP TABLE IF EXISTS `salles`;
-DROP TABLE IF EXISTS `chambres`;
-DROP TABLE IF EXISTS `types_chambres`;
-DROP TABLE IF EXISTS `utilisateurs`;
-
-SET FOREIGN_KEY_CHECKS = 1;
 
 -- ----------------------------
 -- 1. Utilisateurs (acteurs actifs)
 -- ----------------------------
-CREATE TABLE `utilisateurs` (
+CREATE TABLE IF NOT EXISTS IF NOT EXISTS `utilisateurs` (
   `id`           INT AUTO_INCREMENT PRIMARY KEY,
   `identifiant`  VARCHAR(50)  NOT NULL UNIQUE,
   `nom`          VARCHAR(100) NOT NULL,
@@ -50,7 +25,7 @@ CREATE TABLE `utilisateurs` (
 -- ----------------------------
 -- 2. Types de chambres
 -- ----------------------------
-CREATE TABLE `types_chambres` (
+CREATE TABLE IF NOT EXISTS `types_chambres` (
   `id`          INT AUTO_INCREMENT PRIMARY KEY,
   `nom`         VARCHAR(100) NOT NULL,
   `description` TEXT,
@@ -65,7 +40,7 @@ CREATE TABLE `types_chambres` (
 -- ----------------------------
 -- 3. Chambres
 -- ----------------------------
-CREATE TABLE `chambres` (
+CREATE TABLE IF NOT EXISTS `chambres` (
   `id`               INT AUTO_INCREMENT PRIMARY KEY,
   `numero`           VARCHAR(20) NOT NULL UNIQUE,
   `id_type_chambre`  INT NOT NULL,
@@ -80,7 +55,7 @@ CREATE TABLE `chambres` (
 -- ----------------------------
 -- 4. Salles de fête (Module Optionnel Premium)
 -- ----------------------------
-CREATE TABLE `salles` (
+CREATE TABLE IF NOT EXISTS `salles` (
   `id`             INT AUTO_INCREMENT PRIMARY KEY,
   `nom`            VARCHAR(100) NOT NULL,
   `capacite`       INT NOT NULL,
@@ -93,7 +68,7 @@ CREATE TABLE `salles` (
 -- ----------------------------
 -- 5. Clients
 -- ----------------------------
-CREATE TABLE `clients` (
+CREATE TABLE IF NOT EXISTS `clients` (
   `id`              INT AUTO_INCREMENT PRIMARY KEY,
   `nom`             VARCHAR(100) NOT NULL,
   `prenom`          VARCHAR(100) NOT NULL,
@@ -112,7 +87,7 @@ CREATE TABLE `clients` (
 -- ----------------------------
 -- 6. Personnel (cuisiniers, ménage, maintenance)
 -- ----------------------------
-CREATE TABLE `personnel` (
+CREATE TABLE IF NOT EXISTS `personnel` (
   `id`          INT AUTO_INCREMENT PRIMARY KEY,
   `nom`         VARCHAR(100) NOT NULL,
   `prenom`      VARCHAR(100) NOT NULL,
@@ -126,7 +101,7 @@ CREATE TABLE `personnel` (
 -- ----------------------------
 -- 7. Catalogue services
 -- ----------------------------
-CREATE TABLE `catalogue_services` (
+CREATE TABLE IF NOT EXISTS `catalogue_services` (
   `id`          INT AUTO_INCREMENT PRIMARY KEY,
   `nom`         VARCHAR(150) NOT NULL,
   `categorie`   ENUM('boisson','nourriture','spa','piscine','voiture','autre') NOT NULL,
@@ -139,7 +114,7 @@ CREATE TABLE `catalogue_services` (
 -- ----------------------------
 -- 8. Menus cuisine (Module Optionnel Premium)
 -- ----------------------------
-CREATE TABLE `menus_cuisine` (
+CREATE TABLE IF NOT EXISTS `menus_cuisine` (
   `id`               INT AUTO_INCREMENT PRIMARY KEY,
   `id_chef`          INT NOT NULL,
   `titre`            VARCHAR(200) NOT NULL,
@@ -153,7 +128,7 @@ CREATE TABLE `menus_cuisine` (
 -- ----------------------------
 -- 9. Articles d'un menu (Module Optionnel Premium)
 -- ----------------------------
-CREATE TABLE `menu_items` (
+CREATE TABLE IF NOT EXISTS `menu_items` (
   `id`         INT AUTO_INCREMENT PRIMARY KEY,
   `id_menu`    INT NOT NULL,
   `id_service` INT NOT NULL,
@@ -164,7 +139,7 @@ CREATE TABLE `menu_items` (
 -- ----------------------------
 -- 10. Réservations (chambre ou salle)
 -- ----------------------------
-CREATE TABLE `reservations` (
+CREATE TABLE IF NOT EXISTS `reservations` (
   `id`               INT AUTO_INCREMENT PRIMARY KEY,
   `id_client`        INT NOT NULL,
   `id_chambre`       INT,
@@ -186,7 +161,7 @@ CREATE TABLE `reservations` (
 -- ----------------------------
 -- 11. Commandes clients
 -- ----------------------------
-CREATE TABLE `commandes` (
+CREATE TABLE IF NOT EXISTS `commandes` (
   `id`               INT AUTO_INCREMENT PRIMARY KEY,
   `id_client`        INT NOT NULL,
   `id_reservation`   INT,
@@ -202,7 +177,7 @@ CREATE TABLE `commandes` (
 -- ----------------------------
 -- 12. Lignes de commande
 -- ----------------------------
-CREATE TABLE `commande_lignes` (
+CREATE TABLE IF NOT EXISTS `commande_lignes` (
   `id`           INT AUTO_INCREMENT PRIMARY KEY,
   `id_commande`  INT NOT NULL,
   `id_service`   INT NOT NULL,
@@ -216,7 +191,7 @@ CREATE TABLE `commande_lignes` (
 -- ----------------------------
 -- 13. Factures
 -- ----------------------------
-CREATE TABLE `factures` (
+CREATE TABLE IF NOT EXISTS `factures` (
   `id`                  INT AUTO_INCREMENT PRIMARY KEY,
   `id_client`           INT NOT NULL,
   `id_reservation`      INT,
@@ -240,7 +215,7 @@ CREATE TABLE `factures` (
 -- ----------------------------
 -- 14. Tâches de ménage (Traçabilité enrichie)
 -- ----------------------------
-CREATE TABLE `taches_menage` (
+CREATE TABLE IF NOT EXISTS `taches_menage` (
   `id`                 INT AUTO_INCREMENT PRIMARY KEY,
   `id_chambre`         INT NOT NULL,
   `id_agent`           INT,
@@ -261,7 +236,7 @@ CREATE TABLE `taches_menage` (
 -- ----------------------------
 -- 15. Historique d'Occupation (Traçabilité des séjours)
 -- ----------------------------
-CREATE TABLE `historique_occupation` (
+CREATE TABLE IF NOT EXISTS `historique_occupation` (
   `id`                    INT AUTO_INCREMENT PRIMARY KEY,
   `id_chambre`            INT NOT NULL,
   `id_reservation`        INT DEFAULT NULL,
@@ -282,7 +257,7 @@ CREATE TABLE `historique_occupation` (
 -- ----------------------------
 -- 16. Paramètres système
 -- ----------------------------
-CREATE TABLE `parametres_systeme` (
+CREATE TABLE IF NOT EXISTS `parametres_systeme` (
   `cle`     VARCHAR(50) PRIMARY KEY,
   `valeur`  TEXT NOT NULL
 ) ENGINE=InnoDB;
@@ -302,7 +277,7 @@ ON DUPLICATE KEY UPDATE `valeur` = VALUES(`valeur`);
 -- ----------------------------
 -- 17. Sorties de Caisse & Dépenses (Fournitures & Maintenance)
 -- ----------------------------
-CREATE TABLE IF NOT EXISTS `sorties_caisse` (
+CREATE TABLE IF NOT EXISTS IF NOT EXISTS `sorties_caisse` (
   `id`                  INT AUTO_INCREMENT PRIMARY KEY,
   `libelle`             VARCHAR(255) NOT NULL,
   `categorie`           ENUM('fourniture','nettoyage','maintenance','materiel','facture','autre') NOT NULL DEFAULT 'fourniture',

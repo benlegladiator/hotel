@@ -26,31 +26,146 @@ if ($is_local) {
     define('DB_NAME', 'minabou_hotel');
     define('DB_USER', 'root');
     define('DB_PASS', '');
+
+    try {
+        $pdo = new PDO(
+            "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
+            DB_USER,
+            DB_PASS,
+            [
+                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES   => false,
+                PDO::ATTR_TIMEOUT            => 5,
+            ]
+        );
+    } catch (PDOException $e) {
+        $pdo = null;
+        throw $e;
+    }
 } else {
     // ── 2. Paramètres InfinityFree (En Ligne) ─────────────────
-    define('DB_HOST', 'sql113.infinityfree.com');
-    define('DB_USER', 'if0_39882531');
-    define('DB_PASS', 'cmTJtR2Z2yq8MO');
-    define('DB_NAME', 'if0_39882531_mandel');
+    $db_host = 'sql113.infinityfree.com';
+    $db_user = 'if0_39882531';
+    $db_pass = 'cmTJtR2Z2yq8MO';
+
+    // Recherche de la base de données hôtelière parmi les bases créées
+    $preferred_dbs = [
+        'if0_39882531_hotel',
+        'if0_39882531_alma',
+        'if0_39882531_almahotel',
+        'if0_39882531_mandel'
+    ];
+
+    $pdo = null;
+    $connected_db = null;
+
+    foreach ($preferred_dbs as $candidate_db) {
+        try {
+            $test_pdo = new PDO(
+                "mysql:host={$db_host};dbname={$candidate_db};charset=utf8mb4",
+                $db_user,
+                $db_pass,
+                [
+                    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES   => false,
+                    PDO::ATTR_TIMEOUT            => 4,
+                ]
+            );
+            $pdo = $test_pdo;
+            $connected_db = $candidate_db;
+            break;
+        } catch (PDOException $ex) {
+            // Tentative sur la base suivante
+        }
+    }
+
+    // Si aucune connexion spécifique n'a marché, tenter la connexion générique
+    if (!$pdo) {
+        $pdo = new PDO(
+            "mysql:host={$db_host};charset=utf8mb4",
+            $db_user,
+            $db_pass,
+            [
+                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES   => false,
+                PDO::ATTR_TIMEOUT            => 4,
+            ]
+        );
+        $dbs = $pdo->query("SHOW DATABASES")->fetchAll(PDO::FETCH_COLUMN);
+        foreach ($dbs as $db_item) {
+            if (strpos($db_item, 'hotel') !== false || strpos($db_item, 'alma') !== false) {
+                $connected_db = $db_item;
+                $pdo->exec("USE `$connected_db`");
+                break;
+            }
+        }
+        if (!$connected_db && !empty($dbs)) {
+            $connected_db = $dbs[0];
+            $pdo->exec("USE `$connected_db`");
+        }
+    }
+
+    define('DB_HOST', $db_host);
+    define('DB_USER', $db_user);
+    define('DB_PASS', $db_pass);
+    define('DB_NAME', $connected_db ?? 'if0_39882531_mandel');
 }
 
 try {
-    $pdo = new PDO(
-        "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
-        DB_USER,
-        DB_PASS,
-        [
-            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES   => false,
-            PDO::ATTR_TIMEOUT            => 5,
-        ]
-    );
-
     // Synchroniser l'heure MySQL avec le fuseau horaire UTC+1
     try {
         $pdo->exec("SET time_zone = '+01:00'");
     } catch (Exception $e) {}
+
+    // Vérifier si la table utilisateurs existe, sinon auto-installer le schéma complet
+    $check_table = $pdo->query("SHOW TABLES LIKE 'utilisateurs'")->fetch();
+    if (!$check_table) {
+        $schema_file = dirname(__DIR__) . '/sql/hotel.sql';
+        if (file_exists($schema_file)) {
+            $raw_sql = file_get_contents($schema_file);
+            $lines = explode("\n", $raw_sql);
+            $clean_lines = [];
+            foreach ($lines as $line) {
+                $trimmed = trim($line);
+                if ($trimmed === '' || strpos($trimmed, '--') === 0 || strpos($trimmed, '#') === 0) continue;
+                $clean_lines[] = $line;
+            }
+            $clean_sql = implode("\n", $clean_lines);
+            $queries = array_filter(array_map('trim', explode(';', $clean_sql)));
+            foreach ($queries as $q) {
+                if (!empty($q)) {
+                    try {
+                        $pdo->exec($q);
+                    } catch (Exception $ex) {}
+                }
+            }
+        }
+
+        // Insérer les données initiales (chambres, admin, réceptionniste)
+        $demo_file = dirname(__DIR__) . '/sql/demo_data.sql';
+        if (file_exists($demo_file)) {
+            $raw_demo = file_get_contents($demo_file);
+            $demo_lines = explode("\n", $raw_demo);
+            $clean_demo_lines = [];
+            foreach ($demo_lines as $dl) {
+                $trimmed = trim($dl);
+                if ($trimmed === '' || strpos($trimmed, '--') === 0 || strpos($trimmed, '#') === 0) continue;
+                $clean_demo_lines[] = $dl;
+            }
+            $clean_demo_sql = implode("\n", $clean_demo_lines);
+            $demo_queries = array_filter(array_map('trim', explode(';', $clean_demo_sql)));
+            foreach ($demo_queries as $dq) {
+                if (!empty($dq)) {
+                    try {
+                        $pdo->exec($dq);
+                    } catch (Exception $ex) {}
+                }
+            }
+        }
+    }
 
     // Auto-migration silencieuse des tables indispensables
     $pdo->exec("

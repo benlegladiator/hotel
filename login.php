@@ -17,6 +17,7 @@ if (!empty($_SESSION['user_id'])) {
 $error = $_GET['error'] ?? '';
 
 // Traitement direct de la connexion (évite tout problème de redirection 404 entre dossiers)
+$db_error_message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $identifiant = trim($_POST['identifiant'] ?? '');
     $password    = $_POST['mot_de_passe'] ?? '';
@@ -24,23 +25,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$identifiant || !$password) {
         $error = 'invalid';
     } else {
-        $stmt = $pdo->prepare("SELECT * FROM utilisateurs WHERE identifiant = ? LIMIT 1");
-        $stmt->execute([$identifiant]);
-        $user = $stmt->fetch();
+        try {
+            if (!$pdo) {
+                throw new Exception("Connexion PDO non disponible.");
+            }
+            $stmt = $pdo->prepare("SELECT * FROM utilisateurs WHERE identifiant = ? LIMIT 1");
+            $stmt->execute([$identifiant]);
+            $user = $stmt->fetch();
 
-        if (!$user || !password_verify($password, $user['mot_de_passe'])) {
-            $error = 'invalid';
-        } elseif (!$user['actif']) {
-            $error = 'inactive';
-        } else {
-            session_regenerate_id(true);
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['nom']     = $user['nom'];
-            $_SESSION['prenom']  = $user['prenom'];
-            $_SESSION['role']    = $user['role'];
+            if (!$user || !password_verify($password, $user['mot_de_passe'])) {
+                $error = 'invalid';
+            } elseif (!$user['actif']) {
+                $error = 'inactive';
+            } else {
+                session_regenerate_id(true);
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['nom']     = $user['nom'];
+                $_SESSION['prenom']  = $user['prenom'];
+                $_SESSION['role']    = $user['role'];
 
-            header('Location: ' . BASE_URL . '/dashboard.php');
-            exit;
+                header('Location: ' . BASE_URL . '/dashboard.php');
+                exit;
+            }
+        } catch (Throwable $e) {
+            $error = 'db_error';
+            $db_error_message = $e->getMessage();
         }
     }
 }
@@ -498,7 +507,19 @@ $hotel_nom = get_system_setting('nom_hotel', 'Alma Hotel');
         </div>
 
         <!-- ── Alerte Erreur ── -->
-        <?php if ($error === 'invalid'): ?>
+        <?php if ($error === 'db_error'): ?>
+            <div class="alert-error" role="alert" style="background:#fff1f2; border-color:#fecdd3; color:#9f1239;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <div>
+                    <strong>Erreur Base de Données :</strong> <?= h($db_error_message ?: 'Impossible de communiquer avec la table utilisateurs.') ?><br>
+                    <a href="db_status.php" style="color:#4f46e5; font-weight:700; text-decoration:underline; font-size:12px; margin-top:4px; display:inline-block;">
+                        👉 Ouvrir l'outil de diagnostic & réparation de la base
+                    </a>
+                </div>
+            </div>
+        <?php elseif ($error === 'invalid'): ?>
             <div class="alert-error" role="alert">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
