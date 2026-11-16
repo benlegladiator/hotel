@@ -67,13 +67,21 @@ require_once '../../includes/header.php';
 
 <div style="max-width: 900px; margin: 0 auto;">
     
+    <!-- ── Bouton Retour Dédié ── -->
+    <div>
+        <a href="<?= BASE_URL ?>/dashboard.php" class="btn-page-back">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>← Retour au Tableau de bord</span>
+        </a>
+    </div>
+
     <!-- En-tête de page -->
-    <div style="margin-bottom: 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-        <div>
-            <h1 style="font-size: 26px; font-weight: 800; color: var(--text-primary); margin: 0;">🏨 Arrivée Client & Encaissement Express</h1>
-            <p style="color: var(--text-secondary); margin-top: 4px; font-size: 14px;">Enregistrez un client et son paiement en quelques secondes sur une seule page aérée.</p>
-        </div>
-        <a href="<?= BASE_URL ?>/dashboard.php" class="btn btn-outline">← Retour Dashboard</a>
+    <div style="margin-bottom: 24px;">
+        <h1 style="font-size: 24px; font-weight: 800; color: var(--text-primary); margin: 0; line-height: 1.2;">🏨 Arrivée Client & Encaissement Express</h1>
+        <p style="color: var(--text-secondary); margin-top: 6px; font-size: 13.5px;">Enregistrez un client et son paiement en quelques secondes sur une seule page aérée.</p>
     </div>
 
     <form method="POST" action="process_express_checkin.php" id="expressForm" autocomplete="off" class="card" style="box-shadow: var(--shadow-md);">

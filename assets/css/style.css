@@ -949,6 +949,13 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
         min-height: 42px;
         justify-content: center;
     }
+    .btn-sm,
+    .btn-page-back,
+    .btn-topbar-back {
+        min-height: 32px !important;
+        flex: 0 0 auto !important;
+        width: auto !important;
+    }
     .btn:active,
     .action-card-bordered:active,
     .mobile-bottom-nav a:active,
@@ -1010,6 +1017,35 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
     .topbar .page-title {
         max-width: 120px;
     }
+}
+
+/* Bouton Lien Retour en tête de page (Navigation Claire) */
+.btn-page-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #ffffff;
+    color: var(--text-secondary, #64748b);
+    border: 1.5px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    transition: all 0.2s ease;
+    margin-bottom: 12px;
+}
+.btn-page-back:hover {
+    background: #4f46e5;
+    color: #ffffff;
+    border-color: #4f46e5;
+}
+.btn-page-back svg {
+    transition: transform 0.2s ease;
+}
+.btn-page-back:hover svg {
+    transform: translateX(-3px);
 }
 
 /* Bouton Retour Universel dans la Topbar */

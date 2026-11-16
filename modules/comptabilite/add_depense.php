@@ -16,12 +16,20 @@ require_once '../../includes/header.php';
 
 <div style="max-width: 800px; margin: 0 auto;">
     
-    <div style="margin-bottom: 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-        <div>
-            <h1 style="font-size: 26px; font-weight: 800; color: #e11d48; margin: 0;">💸 Sortie de Caisse / Dépense Directe</h1>
-            <p style="color: var(--text-secondary); margin-top: 4px; font-size: 14px;">Enregistrez les achats quotidiens (savon, eau, ampoules, maintenance) qui diminuent la caisse.</p>
-        </div>
-        <a href="<?= BASE_URL ?>/dashboard.php" class="btn btn-outline">← Retour</a>
+    <!-- ── Bouton Retour au Journal de Caisse ── -->
+    <div>
+        <a href="<?= BASE_URL ?>/modules/comptabilite/journal.php" class="btn-page-back">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>← Retour au Journal de Caisse</span>
+        </a>
+    </div>
+
+    <div style="margin-bottom: 24px;">
+        <h1 style="font-size: 24px; font-weight: 800; color: #e11d48; margin: 0; line-height: 1.2;">💸 Sortie de Caisse / Dépense Directe</h1>
+        <p style="color: var(--text-secondary); margin-top: 6px; font-size: 13.5px;">Enregistrez les achats quotidiens (savon, eau, ampoules, maintenance) qui diminuent la caisse.</p>
     </div>
 
     <!-- ── Suggestions Rapides en 1 Clic ── -->

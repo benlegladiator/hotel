@@ -125,17 +125,27 @@ require_once '../../includes/header.php';
     <p>Éditée le <?= date('d/m/Y à H:i') ?></p>
 </div>
 
-<div class="page-header no-print" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:20px;">
+<!-- ── Bouton Retour Dédié ── -->
+<div class="no-print">
+    <a href="<?= BASE_URL ?>/dashboard.php" class="btn-page-back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>← Retour au Tableau de bord</span>
+    </a>
+</div>
+
+<div class="page-header no-print" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:15px; margin-bottom:20px;">
     <div>
-        <h1 class="page-header-title">Traçabilité du Nettoyage des Chambres</h1>
-        <p class="text-secondary" style="margin:5px 0 0 0;">Suivi chronologique des chambres nettoyées par les caissières et le personnel</p>
+        <h1 class="page-header-title" style="margin:0; line-height:1.2;">Traçabilité du Nettoyage des Chambres</h1>
+        <p class="text-secondary" style="margin:5px 0 0 0; font-size:13.5px;">Suivi chronologique des chambres nettoyées par le personnel</p>
     </div>
-    <div style="display:flex; gap:10px;">
+    <div style="display:flex; gap:10px; flex-wrap:wrap;" class="page-header-actions">
         <button class="btn-print" onclick="window.print()">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-            Imprimer la Traçabilité (<?= h($period_info['label']) ?>)
+            Imprimer la Traçabilité
         </button>
-        <a href="<?= BASE_URL ?>/dashboard.php" class="btn btn-secondary">← Retour Dashboard</a>
     </div>
 </div>
 

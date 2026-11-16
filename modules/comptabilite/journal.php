@@ -123,12 +123,25 @@ require_once '../../includes/header.php';
 
 <div style="max-width: 1240px; margin: 0 auto;">
     
-    <!-- ── En-tête ── -->
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 28px;">
+    <!-- ── Bouton Retour au Tableau de Bord (Navigation Dédiée) ── -->
+    <div>
+        <a href="<?= BASE_URL ?>/dashboard.php" class="btn-page-back">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>← Retour au Tableau de bord</span>
+        </a>
+    </div>
+
+    <!-- ── En-tête Titre & Actions ── -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;" class="page-header">
         <div>
-            <h1 style="font-size: 26px; font-weight: 800; color: var(--text-primary); margin: 0;">📊 Journal Général de Caisse & Traçabilité</h1>
-            <p style="color: var(--text-secondary); margin-top: 4px; font-size: 14px;">
-                Vue complète des entrées (séjours) et des sorties (savon, eau, charges) du 
+            <h1 style="font-size: 24px; font-weight: 800; color: var(--text-primary); margin: 0; line-height: 1.2;">
+                📊 Journal Général de Caisse & Traçabilité
+            </h1>
+            <p style="color: var(--text-secondary); margin-top: 6px; font-size: 13.5px;">
+                Vue complète des entrées (séjours) et des sorties (charges) du 
                 <strong><?= format_date($date_debut) ?></strong> au <strong><?= format_date($date_fin) ?></strong>.
             </p>
         </div>
@@ -143,9 +156,6 @@ require_once '../../includes/header.php';
             <?php endif; ?>
             <a href="add_depense.php" class="btn btn-danger">
                 <span>💸</span> + Dépense
-            </a>
-            <a href="<?= BASE_URL ?>/dashboard.php" class="btn btn-outline">
-                ← Retour
             </a>
         </div>
     </div>

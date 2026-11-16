@@ -68,22 +68,30 @@ require_once '../../includes/header.php';
 
 <div style="max-width: 1180px; margin: 0 auto;">
     
+    <!-- ── Bouton Retour Dédié ── -->
+    <div>
+        <a href="<?= BASE_URL ?>/dashboard.php" class="btn-page-back">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>← Retour au Tableau de bord</span>
+        </a>
+    </div>
+
     <!-- ── En-tête de page ── -->
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;" class="page-header">
         <div>
-            <h1 style="font-size: 26px; font-weight: 800; color: var(--text-primary); margin: 0; letter-spacing: -0.02em;">
+            <h1 style="font-size: 24px; font-weight: 800; color: var(--text-primary); margin: 0; line-height: 1.2;">
                 📋 Départs Clients & Clôture (Check-out)
             </h1>
-            <p style="color: var(--text-secondary); margin-top: 4px; font-size: 14px;">
-                Consultez la liste des occupations actuelles et validez le départ d'un client pour libérer la chambre et lancer le ménage.
+            <p style="color: var(--text-secondary); margin-top: 6px; font-size: 13.5px;">
+                Consultez la liste des occupations actuelles et validez le départ d'un client.
             </p>
         </div>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;" class="page-header-actions">
             <a href="<?= BASE_URL ?>/modules/checkin_checkout/express_checkin.php" class="btn btn-primary" style="box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);">
                 + Nouvelle Arrivée
-            </a>
-            <a href="<?= BASE_URL ?>/dashboard.php" class="btn btn-outline">
-                ← Tableau de bord
             </a>
         </div>
     </div>

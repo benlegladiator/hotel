@@ -137,16 +137,27 @@ require_once '../../includes/header.php';
     <p>Édité le <?= date('d/m/Y à H:i') ?></p>
 </div>
 
-<div class="page-header no-print" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:20px;">
+<!-- ── Bouton Retour Dédié ── -->
+<div class="no-print">
+    <a href="<?= BASE_URL ?>/dashboard.php" class="btn-page-back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>← Retour au Tableau de bord</span>
+    </a>
+</div>
+
+<div class="page-header no-print" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:15px; margin-bottom:20px;">
     <div>
-        <h1 class="page-header-title" style="display:flex; align-items:center; gap:10px;">
+        <h1 class="page-header-title" style="display:flex; align-items:center; gap:10px; margin:0; line-height:1.2;">
             <span>🏨</span> Journal des Occupations
         </h1>
-        <p class="text-secondary" style="margin:5px 0 0 0;">
-            Supervision de l'activité hôtelière : <strong>Qui</strong> a séjourné, <strong>Quand</strong>, dans <strong>Quelle chambre</strong>, <strong>Combien</strong> a été payé et <strong>Par qui</strong> ça a été enregistré.
+        <p class="text-secondary" style="margin:5px 0 0 0; font-size:13.5px;">
+            Supervision de l'activité hôtelière : qui a séjourné, quand, chambre et encaissement.
         </p>
     </div>
-    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <div style="display:flex; gap:10px; flex-wrap:wrap;" class="page-header-actions">
         <?php if (!$is_boss): ?>
             <a href="<?= BASE_URL ?>/modules/checkin_checkout/express_checkin.php" class="btn btn-success">📥 Enregistrer une Occupation</a>
         <?php endif; ?>
@@ -154,7 +165,6 @@ require_once '../../includes/header.php';
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
             Imprimer le Journal
         </button>
-        <a href="<?= BASE_URL ?>/dashboard.php" class="btn btn-secondary">← Retour Dashboard</a>
     </div>
 </div>
 

@@ -33,15 +33,25 @@ $page_title = 'Liste des Chambres & Visuels';
 require_once INCLUDES_PATH . '/header.php';
 ?>
 
+<!-- ── Bouton Retour Dédié ── -->
+<div class="no-print">
+    <a href="<?= BASE_URL ?>/dashboard.php" class="btn-page-back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>← Retour au Tableau de bord</span>
+    </a>
+</div>
+
 <div class="page-header">
     <div>
         <h1 class="page-header-title">Chambres & Visuels</h1>
         <p class="text-secondary" style="margin-top:4px;">Gestion des chambres, tarifs et photos</p>
     </div>
     <div class="page-header-actions">
-        <a href="tracabilite.php" class="btn btn-outline" style="margin-right:8px;">📊 Grille de Traçabilité</a>
+        <a href="tracabilite.php" class="btn btn-outline">📊 Grille de Traçabilité</a>
         <a href="add.php" class="btn btn-primary">+ Ajouter une Chambre</a>
-        <a href="<?= BASE_URL ?>/dashboard.php" class="btn btn-secondary" style="margin-left:8px;">← Retour Dashboard</a>
     </div>
 </div>
 
