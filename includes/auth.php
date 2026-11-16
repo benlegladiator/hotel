@@ -17,8 +17,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Auto-reconnexion transparente via Cookie Persistant Alma Hotel (90 jours)
-if (empty($_SESSION['user_id']) && !empty($_COOKIE['hotel_remember']) && isset($pdo)) {
+// Auto-reconnexion transparente via Cookie Persistant Alma Hotel (90 jours) - UNIQUEMENT SUR MOBILE
+$is_mobile_client = (bool) preg_match('/(android|iphone|ipad|ipod|mobile|phone|blackberry|opera mini|windows phone)/i', $_SERVER['HTTP_USER_AGENT'] ?? '');
+if ($is_mobile_client && empty($_SESSION['user_id']) && !empty($_COOKIE['hotel_remember']) && isset($pdo)) {
     $cookie_parts = explode(':', $_COOKIE['hotel_remember'], 2);
     if (count($cookie_parts) === 2) {
         $c_uid   = intval($cookie_parts[0]);

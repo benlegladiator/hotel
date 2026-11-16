@@ -109,6 +109,21 @@ $num_facture = "#F-" . str_pad($facture['id'], 4, '0', STR_PAD_LEFT);
 <body>
 
 <div class="invoice-print-actions" style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-bottom:24px;">
+    <?php
+    $wa_msg  = "🏨 *" . strtoupper(get_system_setting('nom_hotel', 'Alma Hotel')) . " — FACTURE " . $num_facture . "*\n";
+    $wa_msg .= "━━━━━━━━━━━━━━━━━━━━\n";
+    $wa_msg .= "👤 *Client :* " . $facture['nom'] . " " . $facture['prenom'] . "\n";
+    if (!empty($resInfo['ch_num'])) {
+        $wa_msg .= "🛏️ *Chambre :* N° " . $resInfo['ch_num'] . "\n";
+    }
+    $wa_msg .= "💵 *Montant :* " . format_prix($facture['montant_final']) . "\n";
+    $wa_msg .= "💳 *Règlement :* " . ucfirst($facture['mode_paiement']) . " (" . strtoupper($facture['statut_paiement']) . ")\n";
+    $wa_msg .= "👤 *Caissière :* " . ($facture['caissier_prenom'] ?? '') . " " . ($facture['caissier_nom'] ?? '') . "\n";
+    $wa_link = get_boss_whatsapp_link($wa_msg);
+    ?>
+    <a href="<?= $wa_link ?>" target="_blank" class="btn" style="background:#25D366; color:#fff; font-weight:700; border-radius:6px; padding:10px 18px; text-decoration:none; display:inline-flex; align-items:center; gap:6px;" title="Envoyer au Boss sur WhatsApp">
+        📲 Notifier le Boss sur WhatsApp
+    </a>
     <button onclick="window.print()" class="btn btn-primary" style="font-weight:700;">🖨️ Imprimer la Facture A4</button>
     <a href="print_ticket.php?id=<?= $facture['id'] ?>" class="btn" style="background:#b45309; color:#fff; font-weight:700; border-radius:6px; padding:10px 18px; text-decoration:none;">🧾 Format Ticket de Caisse (80mm)</a>
     <a href="<?= BASE_URL ?>/modules/checkin_checkout/express_checkin.php" class="btn" style="background:#059669; color:#fff; font-weight:700; border-radius:6px; padding:10px 18px; text-decoration:none;">+ Nouvelle Arrivée</a>

@@ -324,3 +324,50 @@ function post_int(string $key, int $default = 0): int {
 function post_float(string $key, float $default = 0.0): float {
     return (float)str_replace(',', '.', $_POST[$key] ?? $default);
 }
+
+// ---------- Notifications WhatsApp Boss ----------
+
+function get_boss_whatsapp_number(): string {
+    $num = get_system_setting('boss_whatsapp_number', '237691670626');
+    $num = preg_replace('/[^0-9]/', '', $num);
+    if (empty($num)) $num = '237691670626';
+    return $num;
+}
+
+function get_boss_whatsapp_link(string $message): string {
+    $num = get_boss_whatsapp_number();
+    return 'https://wa.me/' . $num . '?text=' . urlencode($message);
+}
+
+function notify_boss_whatsapp(string $titre, string $details, float $montant = 0): void {
+    $hotel_nom = get_system_setting('nom_hotel', 'Alma Hotel');
+    $msg  = "🏨 *" . strtoupper($hotel_nom) . " — " . strtoupper($titre) . "*\n";
+    $msg .= "━━━━━━━━━━━━━━━━━━━━\n";
+    $msg .= $details . "\n";
+    if ($montant > 0) {
+        $msg .= "💵 *Montant :* " . format_prix($montant) . "\n";
+    }
+    $msg .= "📅 *Heure :* " . date('d/m/Y H:i') . "\n";
+    $msg .= "👤 *Opérateur :* " . ($_SESSION['prenom'] ?? 'Desk') . " " . ($_SESSION['nom'] ?? '') . "\n";
+
+    // Si une API passerelle est configurée (UltraMsg, Green API, etc.)
+    $api_url   = get_system_setting('boss_whatsapp_api_url', '');
+    $api_token = get_system_setting('boss_whatsapp_api_token', '');
+    $boss_num  = get_boss_whatsapp_number();
+
+    if (!empty($api_url) && !empty($boss_num)) {
+        try {
+            $ch = curl_init($api_url);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+                'token' => $api_token,
+                'to'    => $boss_num,
+                'body'  => $msg,
+            ]));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 2);
+            curl_exec($ch);
+            curl_close($ch);
+        } catch (Throwable $e) {}
+    }
+}

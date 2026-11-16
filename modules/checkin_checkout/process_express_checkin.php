@@ -219,6 +219,13 @@ try {
 
     $pdo->commit();
 
+    // 7. Notification automatique au Boss (WhatsApp)
+    $wa_details = "🛏️ *Chambre {$chambre['numero']}* ({$chambre['type_nom']})\n" .
+                  "👤 *Client :* $nom $prenom\n" .
+                  "📋 *Formule :* $remarque_sejour\n" .
+                  "💳 *Règlement :* " . ucfirst($mode_paiement);
+    notify_boss_whatsapp("Nouvelle Arrivée Encaissée", $wa_details, (float)$montant_paye);
+
     set_flash('success', "🎉 Client $nom $prenom installé en Chambre {$chambre['numero']} ($remarque_sejour) ! Encaissement de " . format_prix($montant_paye) . " enregistré.");
     redirect(BASE_URL . "/modules/facturation/print.php?id=$id_facture");
 

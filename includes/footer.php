@@ -156,6 +156,7 @@ $is_act_caisse    = (strpos($req_uri, '/comptabilite/') !== false);
 </button>
 
 <script>
+window.BASE_URL = '<?= BASE_URL ?>';
 window.addEventListener('scroll', function() {
     var btn = document.getElementById('scrollToTopBtn');
     if (btn) {

@@ -76,6 +76,25 @@ $accent = get_user_accent();
                 <a href="<?= BASE_URL ?>/modules/parametres/index.php?tab=apparence" class="btn btn-sm btn-outline no-print" title="Changer le Thème & la Couleur" style="display:flex; align-items:center; gap:6px;">
                     🎨 <span style="font-size:12px; text-transform:capitalize;"><?= h($theme) ?> / <?= h($accent) ?></span>
                 </a>
+
+                <?php if (is_supervisor()): ?>
+                <!-- Cloche Sonore des Notifications du Boss -->
+                <div style="position: relative;" class="no-print">
+                    <button type="button" id="bossBellBtn" onclick="toggleBossBellDropdown()" class="btn btn-sm btn-outline" style="border-radius: 50%; width: 34px; height: 34px; padding: 0; display: flex; align-items: center; justify-content: center; position: relative;" title="Alertes Entrées & Caisse Boss">
+                        🔔
+                        <span id="bossBellBadge" style="display:none; position: absolute; top: -4px; right: -4px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 800; border-radius: 10px; padding: 1px 5px; min-width: 16px; text-align: center; border: 1.5px solid #fff;">0</span>
+                    </button>
+                    <div id="bossBellDropdown" style="display: none; position: absolute; right: 0; top: 40px; width: 320px; max-height: 400px; overflow-y: auto; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.18); z-index: 10001; padding: 14px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; margin-bottom: 10px;">
+                            <strong style="font-size: 13px; color: #0f172a;">🔔 Entrées & Caisses Récentes</strong>
+                            <button type="button" onclick="markAllBossBellRead()" style="background: none; border: none; font-size: 11px; color: #4f46e5; font-weight: 700; cursor: pointer;">Tout marquer lu</button>
+                        </div>
+                        <div id="bossBellList" style="font-size: 12px; color: #334155; display: flex; flex-direction: column; gap: 8px;">
+                            <div style="text-align: center; padding: 15px; color: #94a3b8;">Chargement des alertes...</div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
                 <div class="user-info">
                     <div class="user-avatar">
                         <?= strtoupper(mb_substr($user['prenom'] ?? 'A', 0, 1) . mb_substr($user['nom'] ?? 'M', 0, 1)) ?>
