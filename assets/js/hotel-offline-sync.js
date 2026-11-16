@@ -447,37 +447,50 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // -------------------------------------------------------------
-// GESTION DU PROMPT D'INSTALLATION PWA (AUTOMATIQUE & MANUEL)
+// GESTION DE L'INSTALLATION AUTOMATIQUE PWA (UNE SEULE FOIS APRÈS CONNEXION)
 // -------------------------------------------------------------
 let deferredHotelPwaPrompt = null;
 let hotelPwaInstallCardShown = false;
 
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredHotelPwaPrompt = e;
-  console.log('[Hotel PWA] Événement beforeinstallprompt capturé avec succès.');
-
-  // Rendre visibles tous les boutons d'installation sur la page
-  document.querySelectorAll('.btn-pwa-install').forEach(btn => {
-    btn.style.display = 'inline-flex';
-  });
-
-  // Proposer automatiquement l'installation après un court instant
-  setTimeout(() => {
-    showHotelAutoInstallPrompt();
-  }, 1200);
-});
-
-// Détecter si l'application est déjà lancée en mode autonome PWA
+// Détecter si l'application est déjà lancée en mode autonome PWA (standalone)
 function isHotelRunningStandalone() {
   return window.matchMedia('(display-mode: standalone)').matches ||
          window.navigator.standalone === true ||
          document.referrer.includes('android-app://');
 }
 
+// Vérifier si le prompt doit être proposé
+function shouldShowHotelInstallPrompt() {
+  if (isHotelRunningStandalone()) return false;
+  if (localStorage.getItem('alma_pwa_installed') === 'true') return false;
+  if (sessionStorage.getItem('hotel_pwa_dismissed') === 'true') return false;
+  const path = window.location.pathname.toLowerCase();
+  if (path.endsWith('login.php') || path.includes('/login.php')) return false;
+  return true;
+}
+
+// Événement natif du navigateur pour l'installation PWA
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredHotelPwaPrompt = e;
+  console.log('[Hotel PWA] Événement beforeinstallprompt capturé.');
+
+  if (shouldShowHotelInstallPrompt()) {
+    setTimeout(showHotelAutoInstallPrompt, 1500);
+  }
+});
+
+// Événement déclenché dès que l'application est installée avec succès
+window.addEventListener('appinstalled', () => {
+  console.log('[Hotel PWA] Application installée avec succès.');
+  localStorage.setItem('alma_pwa_installed', 'true');
+  dismissHotelInstallPrompt();
+  showHotelToast('🎉 Application Alma Hotel installée avec succès !', 'success');
+});
+
+// Affichage de la carte d'installation automatique
 function showHotelAutoInstallPrompt() {
-  if (isHotelRunningStandalone() || hotelPwaInstallCardShown) return;
-  if (sessionStorage.getItem('hotel_pwa_dismissed') === 'true') return;
+  if (!shouldShowHotelInstallPrompt() || hotelPwaInstallCardShown) return;
 
   hotelPwaInstallCardShown = true;
   let card = document.getElementById('hotelAutoInstallPrompt');
@@ -486,14 +499,14 @@ function showHotelAutoInstallPrompt() {
     card.id = 'hotelAutoInstallPrompt';
     card.style.cssText = `
       position: fixed;
-      bottom: 80px;
-      right: 18px;
-      left: 18px;
-      max-width: 420px;
+      bottom: 24px;
+      right: 20px;
+      left: 20px;
+      max-width: 440px;
       margin: 0 auto;
       background: #ffffff;
       border-radius: 18px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.28), 0 0 0 1px rgba(0,0,0,0.06);
+      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(15, 23, 42, 0.08);
       z-index: 999999;
       padding: 16px 18px;
       font-family: inherit;
@@ -501,55 +514,98 @@ function showHotelAutoInstallPrompt() {
     `;
     const baseUrl = window.HOTEL_BASE_URL || '';
     card.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
-        <img src="${baseUrl}/assets/img/pwa/icon-192.png" alt="Alma Hotel" style="width: 46px; height: 46px; border-radius: 12px; object-fit: contain; background: #1e1b4b; padding: 4px; box-shadow: 0 4px 10px rgba(30,27,75,0.2);">
-        <div style="flex: 1;">
-          <h4 style="margin: 0; font-size: 15px; font-weight: 800; color: #0f172a;">Installer Alma Hotel</h4>
-          <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">Installez l'application sur votre écran d'accueil pour un accès ultra-rapide et la caisse hors-ligne.</p>
+      <div style="display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px;">
+        <img src="${baseUrl}/assets/img/pwa/icon-192.png" alt="Alma Hotel" style="width: 44px; height: 44px; border-radius: 12px; object-fit: contain; background: #1e1b4b; padding: 4px; box-shadow: 0 4px 10px rgba(30,27,75,0.2); flex-shrink: 0;">
+        <div style="flex: 1; min-width: 0;">
+          <h4 style="margin: 0; font-size: 15px; font-weight: 800; color: #0f172a; line-height: 1.3;">Installer l'application Alma Hotel</h4>
+          <p style="margin: 4px 0 0 0; font-size: 12.5px; color: #64748b; line-height: 1.4;">Installez l'application sur cet appareil pour un accès direct depuis votre bureau / écran d'accueil et profiter de la caisse rapide.</p>
         </div>
-        <button onclick="dismissHotelInstallPrompt()" style="background: none; border: none; font-size: 20px; color: #94a3b8; cursor: pointer; padding: 4px;">✕</button>
+        <button onclick="dismissHotelInstallPrompt()" aria-label="Fermer" style="background: none; border: none; font-size: 20px; color: #94a3b8; cursor: pointer; padding: 2px 6px; line-height: 1;">✕</button>
       </div>
-      <div style="display: flex; gap: 10px;">
-        <button onclick="triggerHotelPwaInstall()" style="flex: 1; background: #1e1b4b; color: #ffffff; border: none; border-radius: 10px; padding: 11px 16px; font-size: 13.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(30,27,75,0.3);">
-          📲 Installer l'application
+      <div id="hotelInstallActions" style="display: flex; gap: 10px;">
+        <button onclick="triggerHotelPwaInstall()" style="flex: 1; background: #1e1b4b; color: #ffffff; border: none; border-radius: 10px; padding: 11px 16px; font-size: 13.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(30,27,75,0.25); transition: opacity 0.2s;">
+          <span>📲</span> <span>Installer l'application</span>
         </button>
         <button onclick="dismissHotelInstallPrompt()" style="background: #f1f5f9; color: #475569; border: none; border-radius: 10px; padding: 11px 16px; font-size: 13px; font-weight: 600; cursor: pointer;">
           Plus tard
         </button>
+      </div>
+      <div id="hotelInstallGuide" style="display: none; margin-top: 12px; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 12.5px; color: #334155; line-height: 1.5;">
       </div>
     `;
     document.body.appendChild(card);
   }
 }
 
+// Déclenchement de l'installation
 function triggerHotelPwaInstall() {
   if (deferredHotelPwaPrompt) {
     deferredHotelPwaPrompt.prompt();
     deferredHotelPwaPrompt.userChoice.then((choiceResult) => {
       console.log('[Hotel PWA] Choix utilisateur:', choiceResult.outcome);
       if (choiceResult.outcome === 'accepted') {
+        localStorage.setItem('alma_pwa_installed', 'true');
         showHotelToast('🎉 Application Alma Hotel installée avec succès !', 'success');
+        dismissHotelInstallPrompt();
       }
       deferredHotelPwaPrompt = null;
+    }).catch(() => {
       dismissHotelInstallPrompt();
     });
   } else {
-    // Cas iOS Safari ou navigateur sans beforeinstallprompt disponible immédiatement
+    const guide = document.getElementById('hotelInstallGuide');
+    const actions = document.getElementById('hotelInstallActions');
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    if (isIOS) {
-      alert("Pour installer Alma Hotel sur iPhone / iPad :\n1. Appuyez sur l'icône Partager (⎋) en bas de Safari.\n2. Faites défiler et choisissez 'Sur l'écran d'accueil' ➕.");
-    } else {
-      alert("Pour installer Alma Hotel :\n1. Ouvrez le menu de votre navigateur (les 3 points ⋮ en haut à droite).\n2. Cliquez sur 'Installer l'application' ou 'Ajouter à l'écran d'accueil'.");
+
+    if (guide && actions) {
+      if (isIOS) {
+        guide.innerHTML = `
+          <strong>Sur iPhone / iPad :</strong><br>
+          1. Appuyez sur le bouton de partage <strong>⎋</strong> en bas de Safari.<br>
+          2. Faites défiler et touchez <strong>« Sur l'écran d'accueil » ➕</strong>.
+        `;
+      } else {
+        guide.innerHTML = `
+          <strong>Sur votre navigateur :</strong><br>
+          1. Cliquez sur l'icône <strong>📥 Installer</strong> dans la barre d'adresse (ou dans le menu ⋮).<br>
+          2. Confirmez l'installation.
+        `;
+      }
+      guide.style.display = 'block';
+      actions.innerHTML = `
+        <button onclick="confirmHotelInstalledManual()" style="flex: 1; background: #059669; color: #ffffff; border: none; border-radius: 10px; padding: 11px 16px; font-size: 13.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+          <span>✓</span> <span>C'est fait, application installée</span>
+        </button>
+        <button onclick="dismissHotelInstallPrompt()" style="background: #f1f5f9; color: #475569; border: none; border-radius: 10px; padding: 11px 16px; font-size: 13px; font-weight: 600; cursor: pointer;">
+          Fermer
+        </button>
+      `;
     }
-    dismissHotelInstallPrompt();
   }
 }
 
+// Confirmation manuelle si navigateur sans prompt JS natif
+function confirmHotelInstalledManual() {
+  localStorage.setItem('alma_pwa_installed', 'true');
+  showHotelToast('✓ Installation enregistrée !', 'success');
+  dismissHotelInstallPrompt();
+}
+
+// Fermeture du prompt
 function dismissHotelInstallPrompt() {
   sessionStorage.setItem('hotel_pwa_dismissed', 'true');
   const card = document.getElementById('hotelAutoInstallPrompt');
   if (card) card.remove();
 }
+
+// Initialisation au chargement de la page pour les utilisateurs connectés
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    if (shouldShowHotelInstallPrompt()) {
+      showHotelAutoInstallPrompt();
+    }
+  }, 1800);
+});
 
 // Enregistrement Service Worker avec support chemin absolu et relatif
 if ('serviceWorker' in navigator) {

@@ -31,7 +31,7 @@ $accent = get_user_accent();
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css?v=<?= time() ?>">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/print.css?v=<?= time() ?>">
     <script>window.HOTEL_BASE_URL = '<?= BASE_URL ?>';</script>
-    <script src="<?= BASE_URL ?>/assets/js/hotel-offline-sync.js"></script>
+    <script src="<?= BASE_URL ?>/assets/js/hotel-offline-sync.js?v=<?= time() ?>"></script>
 </head>
 <body data-theme="<?= h($theme) ?>" data-accent="<?= h($accent) ?>">
 <div class="app-layout">
