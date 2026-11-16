@@ -19,7 +19,7 @@ $accent = get_user_accent();
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="manifest" href="<?= BASE_URL ?>/manifest.json">
+    <link rel="manifest" href="<?= BASE_URL ?>/manifest.php">
     <link rel="icon" type="image/png" sizes="32x32" href="<?= BASE_URL ?>/assets/img/pwa/favicon-32x32.png">
     <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/pwa/favicon.png">
     <link rel="shortcut icon" href="<?= BASE_URL ?>/favicon.ico">
@@ -29,6 +29,7 @@ $accent = get_user_accent();
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css?v=<?= time() ?>">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/print.css?v=<?= time() ?>">
+    <script>window.HOTEL_BASE_URL = '<?= BASE_URL ?>';</script>
     <script src="<?= BASE_URL ?>/assets/js/hotel-offline-sync.js"></script>
 </head>
 <body data-theme="<?= h($theme) ?>" data-accent="<?= h($accent) ?>">

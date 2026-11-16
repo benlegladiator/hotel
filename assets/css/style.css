@@ -1011,3 +1011,16 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
         max-width: 120px;
     }
 }
+
+/* Animation d'apparition du volet d'installation PWA */
+@keyframes hotelSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+

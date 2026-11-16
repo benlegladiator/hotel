@@ -63,7 +63,7 @@ $hotel_nom = get_system_setting('nom_hotel', 'Alma Hotel');
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Accès Sécurisé — <?= h($hotel_nom) ?></title>
     <meta name="description" content="Espace d'authentification pour <?= h($hotel_nom) ?>">
-    <link rel="manifest" href="<?= BASE_URL ?>/manifest.json">
+    <link rel="manifest" href="<?= BASE_URL ?>/manifest.php">
     <link rel="icon" type="image/png" sizes="32x32" href="<?= BASE_URL ?>/assets/img/pwa/favicon-32x32.png">
     <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/pwa/favicon.png">
     <link rel="shortcut icon" href="<?= BASE_URL ?>/favicon.ico">
@@ -71,6 +71,8 @@ $hotel_nom = get_system_setting('nom_hotel', 'Alma Hotel');
     <meta name="theme-color" content="#1e1b4b">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script>window.HOTEL_BASE_URL = '<?= BASE_URL ?>';</script>
+    <script src="<?= BASE_URL ?>/assets/js/hotel-offline-sync.js"></script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -593,6 +595,12 @@ $hotel_nom = get_system_setting('nom_hotel', 'Alma Hotel');
             </button>
 
         </form>
+
+        <div style="margin-top: 18px; text-align: center;">
+            <button type="button" class="btn-pwa-install" onclick="triggerHotelPwaInstall()" style="background: rgba(79, 70, 229, 0.08); color: #4f46e5; border: 1.5px solid #c7d2fe; border-radius: 12px; padding: 11px 20px; font-size: 13.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; transition: all 0.2s ease;">
+                <span>📲</span> Installer l'application sur cet appareil
+            </button>
+        </div>
 
         <div class="security-badge">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

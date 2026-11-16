@@ -144,8 +144,11 @@ $is_admin   = is_admin();
     </nav>
 
     <!-- ── Bouton Déconnexion Fixe en Bas du Menu Latéral (Rouge Fixe) ── -->
-    <div class="sidebar-footer" style="position: sticky; bottom: 0; left: 0; right: 0; padding: 14px 16px; background: #ffffff; border-top: 1.5px solid var(--border-light); z-index: 999; box-shadow: 0 -4px 14px rgba(0,0,0,0.06); flex-shrink: 0;">
-        <a href="<?= BASE_URL ?>/logout.php" class="btn-sidebar-logout" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; height: 46px; background: #dc2626 !important; color: #ffffff !important; border-radius: 10px; font-weight: 800; font-size: 14.5px; text-decoration: none; box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35); transition: all 0.2s ease;">
+    <div class="sidebar-footer" style="position: sticky; bottom: 0; left: 0; right: 0; padding: 12px 16px; background: #ffffff; border-top: 1.5px solid var(--border-light); z-index: 999; box-shadow: 0 -4px 14px rgba(0,0,0,0.06); flex-shrink: 0; display: flex; flex-direction: column; gap: 8px;">
+        <button type="button" class="btn-pwa-install" onclick="triggerHotelPwaInstall()" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 40px; background: #eef2ff; color: #4338ca; border: 1.5px solid #c7d2fe; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s ease;">
+            <span>📲</span> <span>Installer l'application</span>
+        </button>
+        <a href="<?= BASE_URL ?>/logout.php" class="btn-sidebar-logout" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; height: 44px; background: #dc2626 !important; color: #ffffff !important; border-radius: 10px; font-weight: 800; font-size: 14px; text-decoration: none; box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35); transition: all 0.2s ease;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                 <polyline points="16 17 21 12 16 7"/>
