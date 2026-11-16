@@ -109,29 +109,63 @@ function closeHotelOfflineModal() {
 }
 </script>
 
-<!-- Barre de Navigation Inférieure Mobile (Expérience Native App PWA) -->
+<!-- Barre de Navigation Inférieure Mobile (Expérience Native App Style Orange Money) -->
+<?php
+$req_uri = $_SERVER['REQUEST_URI'] ?? '';
+$is_act_accueil   = (strpos($req_uri, 'dashboard.php') !== false || substr(parse_url($req_uri, PHP_URL_PATH), -1) === '/');
+$is_act_arrivee   = (strpos($req_uri, 'checkin') !== false && strpos($req_uri, 'checkout') === false);
+$is_act_depart    = (strpos($req_uri, 'checkout') !== false);
+$is_act_nettoyage = (strpos($req_uri, '/menage/') !== false);
+$is_act_caisse    = (strpos($req_uri, '/comptabilite/') !== false);
+?>
 <nav class="mobile-bottom-nav no-print" id="mobileBottomNav">
-    <a href="<?= BASE_URL ?>/dashboard.php" class="<?= (strpos($_SERVER['REQUEST_URI'] ?? '', 'dashboard.php') !== false) ? 'active' : '' ?>">
-        <span style="font-size: 18px;">🏠</span>
+    <!-- 1. Accueil -->
+    <a href="<?= BASE_URL ?>/dashboard.php" class="<?= $is_act_accueil ? 'active' : '' ?>">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
         <span>Accueil</span>
     </a>
-    <a href="<?= BASE_URL ?>/modules/chambres/list.php" class="<?= (strpos($_SERVER['REQUEST_URI'] ?? '', '/chambres/') !== false) ? 'active' : '' ?>">
-        <span style="font-size: 18px;">🛏️</span>
-        <span>Chambres</span>
+
+    <!-- 2. Arrivée -->
+    <a href="<?= BASE_URL ?>/modules/checkin_checkout/express_checkin.php" class="<?= $is_act_arrivee ? 'active' : '' ?>">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+            <polyline points="10 17 15 12 10 7"/>
+            <line x1="15" y1="12" x2="3" y2="12"/>
+        </svg>
+        <span>Arrivée</span>
     </a>
-    <div class="mobile-bottom-nav-action">
-        <a href="<?= BASE_URL ?>/modules/checkin_checkout/express_checkin.php" class="mobile-bottom-nav-action-btn" title="Arrivée Express">
-            ⚡
-        </a>
-    </div>
-    <a href="<?= BASE_URL ?>/modules/checkin_checkout/checkout.php" class="<?= (strpos($_SERVER['REQUEST_URI'] ?? '', 'checkout.php') !== false) ? 'active' : '' ?>">
-        <span style="font-size: 18px;">📋</span>
+
+    <!-- 3. Départ -->
+    <a href="<?= BASE_URL ?>/modules/checkin_checkout/checkout.php" class="<?= $is_act_depart ? 'active' : '' ?>">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
         <span>Départ</span>
     </a>
-    <button type="button" onclick="toggleSidebar()" aria-label="Menu complet">
-        <span style="font-size: 18px;">☰</span>
-        <span>Menu</span>
-    </button>
+
+    <!-- 4. Nettoyage -->
+    <a href="<?= BASE_URL ?>/modules/menage/tracabilite.php" class="<?= $is_act_nettoyage ? 'active' : '' ?>">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+        </svg>
+        <span>Nettoyage</span>
+    </a>
+
+    <!-- 5. Caisse -->
+    <a href="<?= BASE_URL ?>/modules/comptabilite/journal.php" class="<?= $is_act_caisse ? 'active' : '' ?>">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <line x1="2" y1="10" x2="22" y2="10"/>
+            <circle cx="7" cy="15" r="1.5"/>
+            <circle cx="17" cy="15" r="1.5"/>
+        </svg>
+        <span>Caisse</span>
+    </a>
 </nav>
 
 <!-- Bouton Flottant Défiler vers le Haut -->

@@ -135,211 +135,361 @@ require_once INCLUDES_PATH . '/header.php';
 
 <div style="max-width: 1240px; margin: 0 auto;">
 
-    <!-- ── En-tête de Bienvenue ── -->
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 28px;">
-        <div>
-            <h1 style="font-size: 26px; font-weight: 800; color: var(--text-primary); margin: 0; letter-spacing: -0.02em;">
-                Bonjour, <?= h($current_u['prenom']) ?> 👋
-            </h1>
-            <p style="color: var(--text-secondary); margin-top: 4px; font-size: 14px;">
-                <?= h(get_system_setting('nom_hotel', 'Alma Hotel')) ?> &bull; <?= date('d/m/Y') ?> &bull; Profil : <strong><?= role_label($current_u['role'] ?? 'receptionniste') ?></strong>
-            </p>
+    <!-- ── En-tête Profil Style Orange Money ── -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="width: 48px; height: 48px; border-radius: 50%; background: #1e1b4b; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; border: 2.5px solid #ff7900; box-shadow: 0 4px 12px rgba(30,27,75,0.25); flex-shrink: 0;">
+                <?= strtoupper(mb_substr($current_u['prenom'] ?? 'A', 0, 1) . mb_substr($current_u['nom'] ?? 'M', 0, 1)) ?>
+            </div>
+            <div>
+                <h1 style="font-size: 22px; font-weight: 800; color: var(--text-primary); margin: 0; letter-spacing: -0.02em;">
+                    Bonjour, <?= h($current_u['prenom']) ?> 👋
+                </h1>
+                <p style="color: var(--text-secondary); margin-top: 2px; font-size: 13px;">
+                    <?= h(get_system_setting('nom_hotel', 'Alma Hotel')) ?> &bull; <span style="color: #ff7900; font-weight: 700;"><?= role_label($current_u['role'] ?? 'receptionniste') ?></span>
+                </p>
+            </div>
         </div>
-        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
             <?php if (is_supervisor()): ?>
-                <a href="<?= BASE_URL ?>/modules/rapports/bilan_employes.php" class="btn btn-primary" style="box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);">
-                    👥 Bilan des Caisses
+                <a href="<?= BASE_URL ?>/modules/rapports/bilan_employes.php" class="btn btn-sm btn-primary" style="box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25); border-radius: 10px;">
+                    👥 Bilan Caisses
                 </a>
             <?php endif; ?>
-            <a href="<?= BASE_URL ?>/modules/comptabilite/journal.php" class="btn btn-outline">
-                📊 Journal de Caisse
+            <a href="<?= BASE_URL ?>/modules/comptabilite/journal.php" class="btn btn-sm btn-outline" style="border-radius: 10px;">
+                📊 Journal Caisse
             </a>
         </div>
     </div>
 
     <!-- ========================================================= -->
-    <!-- CAS 1 : TABLEAU DE BORD DU BOSS (SUPERVISION STRATÉGIQUE) -->
+    <!-- CAS 1 : TABLEAU DE BORD DU BOSS (STYLE ORANGE MONEY)      -->
     <!-- ========================================================= -->
-    <?php if ($is_boss): ?>
+    <?php if ($is_boss): 
+        $solde_total_tresorerie = ($caisse_boss_total ?? 0) + ($especes_caissieres_total ?? 0);
+    ?>
 
-        <!-- ── 1. STATS GLOBALES DU BOSS EN HAUT (5 Indicateurs Ultra-Compacts) ── -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; margin-bottom: 20px;">
-            
-            <div style="background: #fffdfa; border: 1px solid #fde68a; border-left: 4px solid #d97706; border-radius: 8px; padding: 6px 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                    <span style="font-size: 11px; font-weight: 700; color: #d97706; text-transform: uppercase;">👑 Caisse Boss</span>
-                    <span style="font-size: 9.5px; background: #fef3c7; color: #b45309; padding: 1px 5px; border-radius: 4px; font-weight: 700;">Direction</span>
+        <!-- ── 1. CARTE HÉRO TRÉSORERIE STYLE "COMPTE PRINCIPAL" ── -->
+        <div class="om-hero-card">
+            <div class="om-hero-top">
+                <div>
+                    <div class="om-hero-tag">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff7900" stroke-width="2.5"><polyline points="7 17 17 7 17 17"/><polyline points="7 7 17 7"/></svg>
+                        <span>Compte Principal &bull; Trésorerie</span>
+                    </div>
+                    <div class="om-hero-amount" id="omHeroAmount">
+                        <?= format_prix($solde_total_tresorerie) ?>
+                    </div>
                 </div>
-                <div style="font-size: 16px; font-weight: 800; color: #d97706; line-height: 1.2;"><?= format_prix($caisse_boss_total) ?></div>
-                <div style="font-size: 10px; color: #92400e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Coffre / Main propre</div>
-            </div>
-
-            <div style="background: #ffffff; border: 1px solid #e0e7ff; border-left: 4px solid #4f46e5; border-radius: 8px; padding: 6px 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                    <span style="font-size: 11px; font-weight: 700; color: #4f46e5; text-transform: uppercase;">💵 Tiroir Caisses</span>
-                    <span style="font-size: 9.5px; background: #e0e7ff; color: #3730a3; padding: 1px 5px; border-radius: 4px; font-weight: 700;">Guichet</span>
+                <div class="om-hero-qr" title="Alma Hotel Pro">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1e1b4b" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
+                        <circle cx="6.5" cy="6.5" r="1.5" fill="#ff7900"/><circle cx="17.5" cy="6.5" r="1.5" fill="#ff7900"/><circle cx="6.5" cy="17.5" r="1.5" fill="#ff7900"/>
+                    </svg>
                 </div>
-                <div style="font-size: 16px; font-weight: 800; color: var(--text-primary); line-height: 1.2;"><?= format_prix($especes_caissieres_total) ?></div>
-                <div style="font-size: 10px; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Espèces au guichet</div>
             </div>
 
-            <div style="background: #ffffff; border: 1px solid #d1fae5; border-left: 4px solid #059669; border-radius: 8px; padding: 6px 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                    <span style="font-size: 11px; font-weight: 700; color: #059669; text-transform: uppercase;">🟢 Recettes Jour</span>
-                    <span style="font-size: 9.5px; background: #d1fae5; color: #065f46; padding: 1px 5px; border-radius: 4px; font-weight: 700;">Séjours</span>
+            <button type="button" onclick="toggleOmBalance()" id="omToggleBtn" class="om-btn-toggle-balance">
+                <span id="omToggleText">Masquer le solde</span> <span id="omToggleIcon">👁️</span>
+            </button>
+
+            <div class="om-hero-subaccounts">
+                <div class="om-subaccount-box">
+                    <div class="om-subaccount-title">
+                        <span>👑</span> <span>Caisse Boss (Coffre)</span>
+                    </div>
+                    <div class="om-subaccount-value" id="omSubBoss" style="color: #fde68a;">
+                        <?= format_prix($caisse_boss_total ?? 0) ?>
+                    </div>
                 </div>
-                <div style="font-size: 16px; font-weight: 800; color: #059669; line-height: 1.2;"><?= format_prix($entrees_today) ?></div>
-                <div style="font-size: 10px; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Paiements perçus</div>
-            </div>
-
-            <div style="background: #ffffff; border: 1px solid #ffe4e6; border-left: 4px solid #e11d48; border-radius: 8px; padding: 6px 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                    <span style="font-size: 11px; font-weight: 700; color: #e11d48; text-transform: uppercase;">🔴 Dépenses Jour</span>
-                    <span style="font-size: 9.5px; background: #ffe4e6; color: #9f1239; padding: 1px 5px; border-radius: 4px; font-weight: 700;">Charges</span>
+                <div class="om-subaccount-box">
+                    <div class="om-subaccount-title">
+                        <span>💵</span> <span>Tiroir Guichet</span>
+                    </div>
+                    <div class="om-subaccount-value" id="omSubGuichet">
+                        <?= format_prix($especes_caissieres_total ?? 0) ?>
+                    </div>
                 </div>
-                <div style="font-size: 16px; font-weight: 800; color: #e11d48; line-height: 1.2;"><?= format_prix($sorties_today) ?></div>
-                <div style="font-size: 10px; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Achats savon, sorties</div>
-            </div>
-
-            <div style="background: #ffffff; border: 1px solid #cffafe; border-left: 4px solid #0891b2; border-radius: 8px; padding: 6px 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                    <span style="font-size: 11px; font-weight: 700; color: #0891b2; text-transform: uppercase;">📈 Occupation</span>
-                    <span style="font-size: 9.5px; background: #cffafe; color: #155e75; padding: 1px 5px; border-radius: 4px; font-weight: 700;">Direct</span>
-                </div>
-                <div style="font-size: 16px; font-weight: 800; color: #0891b2; line-height: 1.2;"><?= $taux_occupation ?>%</div>
-                <div style="font-size: 10px; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?= $ch_occupees ?>/<?= $total_chambres ?> occupées</div>
-            </div>
-
-        </div>
-
-        <!-- ── 2. LES 6 GRANDS BOUTONS DU BOSS (BORDURES COLORÉES & ÉPURÉS) ── -->
-        <div style="margin-bottom: 36px;">
-            <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-light); margin-bottom: 14px;">
-                ⚡ Espaces de Consultation & Décision du Patron :
-            </div>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px;">
-                
-                <!-- 1. Trésorerie & Caisse du Boss -->
-                <a href="<?= BASE_URL ?>/modules/comptabilite/journal.php" class="action-card-bordered" style="background: #ffffff; border: 1.5px solid #fde68a; border-left: 6px solid #d97706; border-radius: var(--r-lg); padding: 14px 18px; text-decoration: none; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-sm); transition: var(--transition);">
-                    <div style="width: 44px; height: 44px; border-radius: 12px; background: #fffbeb; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;">👑</div>
-                    <div style="font-size: 15.5px; font-weight: 800; color: #d97706; line-height: 1.2;">1. Trésorerie & Caisse du Boss</div>
-                </a>
-
-                <!-- 2. Comment Tourne l'Hôtel (Journal des Occupations) -->
-                <a href="<?= BASE_URL ?>/modules/chambres/tracabilite.php" class="action-card-bordered" style="background: #ffffff; border: 1.5px solid #a7f3d0; border-left: 6px solid #059669; border-radius: var(--r-lg); padding: 14px 18px; text-decoration: none; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-sm); transition: var(--transition);">
-                    <div style="width: 44px; height: 44px; border-radius: 12px; background: #ecfdf5; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;">🏨</div>
-                    <div style="font-size: 15.5px; font-weight: 800; color: #059669; line-height: 1.2;">2. Journal des Occupations</div>
-                </a>
-
-                <!-- 3. Contrôle des Employés & Jours Travaillés -->
-                <a href="<?= BASE_URL ?>/modules/rapports/bilan_employes.php" class="action-card-bordered" style="background: #ffffff; border: 1.5px solid #c7d2fe; border-left: 6px solid #4f46e5; border-radius: var(--r-lg); padding: 14px 18px; text-decoration: none; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-sm); transition: var(--transition);">
-                    <div style="width: 44px; height: 44px; border-radius: 12px; background: #eef2ff; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;">👥</div>
-                    <div style="font-size: 15.5px; font-weight: 800; color: #4f46e5; line-height: 1.2;">3. Contrôle Employés & Jours</div>
-                </a>
-
-                <!-- 4. Audit du Ménage & Consommation Matériel -->
-                <a href="<?= BASE_URL ?>/modules/menage/tracabilite.php" class="action-card-bordered" style="background: #ffffff; border: 1.5px solid #a5f3fc; border-left: 6px solid #0891b2; border-radius: var(--r-lg); padding: 14px 18px; text-decoration: none; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-sm); transition: var(--transition);">
-                    <div style="width: 44px; height: 44px; border-radius: 12px; background: #ecfeff; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;">🧹</div>
-                    <div style="font-size: 15.5px; font-weight: 800; color: #0891b2; line-height: 1.2;">4. Audit Ménage & Savon</div>
-                </a>
-
-                <!-- 5. Dépense / Achat Direction (Seule action active) -->
-                <a href="<?= BASE_URL ?>/modules/comptabilite/add_depense.php" class="action-card-bordered" style="background: #ffffff; border: 1.5px solid #fecdd3; border-left: 6px solid #e11d48; border-radius: var(--r-lg); padding: 14px 18px; text-decoration: none; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-sm); transition: var(--transition);">
-                    <div style="width: 44px; height: 44px; border-radius: 12px; background: #fff1f2; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;">💸</div>
-                    <div style="font-size: 15.5px; font-weight: 800; color: #e11d48; line-height: 1.2;">5. Dépense / Achat Direction</div>
-                </a>
-
-                <!-- 6. Paramètres & Gestion Globale (CRUD) -->
-                <a href="<?= BASE_URL ?>/modules/parametres/gestion.php" class="action-card-bordered" style="background: #ffffff; border: 1.5px solid #cbd5e1; border-left: 6px solid #475569; border-radius: var(--r-lg); padding: 14px 18px; text-decoration: none; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-sm); transition: var(--transition);">
-                    <div style="width: 44px; height: 44px; border-radius: 12px; background: #f8fafc; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;">⚙️</div>
-                    <div style="font-size: 15.5px; font-weight: 800; color: #475569; line-height: 1.2;">6. Paramètres & Gestion (CRUD)</div>
-                </a>
-
             </div>
         </div>
 
+        <!-- ── 2. BANNIÈRE HORIZONTALE OCCUPATION (STYLE "MES CRÉDITS") ── -->
+        <a href="<?= BASE_URL ?>/modules/chambres/tracabilite.php" class="om-credit-banner">
+            <div class="om-credit-icon">
+                📈
+            </div>
+            <div class="om-credit-info">
+                <div class="om-credit-title">Taux d'Occupation Hôtel : <strong><?= $taux_occupation ?>%</strong></div>
+                <div class="om-credit-subtitle"><?= $ch_occupees ?>/<?= $total_chambres ?> occupées &bull; <?= $ch_libres ?> libres &bull; <?= $ch_nettoyage ?> en ménage</div>
+            </div>
+            <div class="om-credit-arrow">
+                &rsaquo;
+            </div>
+        </a>
+
+        <!-- ── 3. GRILLE DES SERVICES 4 COLONNES (TRICHE ORANGE MONEY) ── -->
+        <div class="om-services-section">
+            <div class="om-section-title">
+                <span>⚡</span> <span>Services & Décisions Direction</span>
+            </div>
+            <div class="om-services-grid">
+                <!-- 1. Arrivée Express -->
+                <a href="<?= BASE_URL ?>/modules/checkin_checkout/express_checkin.php" class="om-service-tile">
+                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #ecfdf5, #d1fae5); border: 1.5px solid #a7f3d0;">
+                        <span>⚡</span>
+                    </div>
+                    <span class="om-tile-label">Arrivée Express</span>
+                </a>
+
+                <!-- 2. Départ Client -->
+                <a href="<?= BASE_URL ?>/modules/checkin_checkout/checkout.php" class="om-service-tile">
+                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 1.5px solid #fde68a;">
+                        <span>📋</span>
+                    </div>
+                    <span class="om-tile-label">Départ Client</span>
+                </a>
+
+                <!-- 3. Caisse Boss -->
+                <a href="<?= BASE_URL ?>/modules/comptabilite/journal.php" class="om-service-tile">
+                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #fff7ed, #ffedd5); border: 1.5px solid #fed7aa;">
+                        <span>👑</span>
+                    </div>
+                    <span class="om-tile-label">Caisse Boss</span>
+                </a>
+
+                <!-- 4. + Dépense Direction -->
+                <a href="<?= BASE_URL ?>/modules/comptabilite/add_depense.php" class="om-service-tile">
+                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #fff1f2, #ffe4e6); border: 1.5px solid #fecdd3;">
+                        <span>💸</span>
+                    </div>
+                    <span class="om-tile-label">+ Dépense</span>
+                </a>
+
+                <!-- 5. Journal Occupations -->
+                <a href="<?= BASE_URL ?>/modules/chambres/tracabilite.php" class="om-service-tile">
+                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 1.5px solid #bbf7d0;">
+                        <span>🏨</span>
+                    </div>
+                    <span class="om-tile-label">Occupations</span>
+                </a>
+
+                <!-- 6. Audit Ménage -->
+                <a href="<?= BASE_URL ?>/modules/menage/tracabilite.php" class="om-service-tile">
+                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #ecfeff, #cffafe); border: 1.5px solid #a5f3fc;">
+                        <span>🧹</span>
+                    </div>
+                    <span class="om-tile-label">Audit Ménage</span>
+                </a>
+
+                <!-- 7. Bilan Employés -->
+                <a href="<?= BASE_URL ?>/modules/rapports/bilan_employes.php" class="om-service-tile">
+                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #eef2ff, #e0e7ff); border: 1.5px solid #c7d2fe;">
+                        <span>👥</span>
+                    </div>
+                    <span class="om-tile-label">Employés</span>
+                </a>
+
+                <!-- 8. Paramètres & CRUD -->
+                <a href="<?= BASE_URL ?>/modules/parametres/gestion.php" class="om-service-tile">
+                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #f8fafc, #f1f5f9); border: 1.5px solid #cbd5e1;">
+                        <span>⚙️</span>
+                    </div>
+                    <span class="om-tile-label">Paramètres</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- ── 4. FLUX DU JOUR COMPACT (RECETTES VS DÉPENSES) ── -->
+        <div class="om-flux-grid">
+            <div class="om-flux-card" style="border-left: 4px solid #059669;">
+                <div class="om-flux-header">
+                    <span style="font-size: 11px; font-weight: 700; color: #059669;">🟢 ENTRÉES DU JOUR</span>
+                    <span class="om-flux-tag" style="background: #d1fae5; color: #065f46;">Séjours</span>
+                </div>
+                <div class="om-flux-value" style="color: #059669;" id="omFluxEntrees">
+                    <?= format_prix($entrees_today) ?>
+                </div>
+                <div class="om-flux-desc">Paiements perçus aujourd'hui</div>
+            </div>
+
+            <div class="om-flux-card" style="border-left: 4px solid #e11d48;">
+                <div class="om-flux-header">
+                    <span style="font-size: 11px; font-weight: 700; color: #e11d48;">🔴 SORTIES DU JOUR</span>
+                    <span class="om-flux-tag" style="background: #ffe4e6; color: #9f1239;">Charges</span>
+                </div>
+                <div class="om-flux-value" style="color: #e11d48;" id="omFluxSorties">
+                    <?= format_prix($sorties_today) ?>
+                </div>
+                <div class="om-flux-desc">Dépenses & achats enregistrés</div>
+            </div>
+        </div>
+
     <!-- ========================================================= -->
-    <!-- CAS 2 : TABLEAU DE BORD DE LA CAISSIÈRE (OPÉRATIONNEL)    -->
+    <!-- CAS 2 : TABLEAU DE BORD DE LA CAISSIÈRE (STYLE ORANGE MONEY)-->
     <!-- ========================================================= -->
     <?php else: ?>
 
-        <!-- ── ACTIONS RAPIDES CAISSIÈRE ── -->
-        <div style="margin-bottom: 32px;">
-            <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-light); margin-bottom: 14px;">
-                ⚡ Actions Rapides Caissière :
+        <!-- ── 1. CARTE HÉRO CAISSE GUICHET ── -->
+        <div class="om-hero-card">
+            <div class="om-hero-top">
+                <div>
+                    <div class="om-hero-tag">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff7900" stroke-width="2.5"><polyline points="7 17 17 7 17 17"/><polyline points="7 7 17 7"/></svg>
+                        <span>Caisse Guichet &bull; Mon Tiroir</span>
+                    </div>
+                    <div class="om-hero-amount" id="omHeroAmount">
+                        <?= format_prix($solde_net_today) ?>
+                    </div>
+                </div>
+                <div class="om-hero-qr" title="Alma Hotel Caisse">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1e1b4b" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
+                        <circle cx="6.5" cy="6.5" r="1.5" fill="#ff7900"/><circle cx="17.5" cy="6.5" r="1.5" fill="#ff7900"/><circle cx="6.5" cy="17.5" r="1.5" fill="#ff7900"/>
+                    </svg>
+                </div>
             </div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px;">
-                
-                <a href="<?= BASE_URL ?>/modules/checkin_checkout/express_checkin.php" class="action-card-bordered" style="background: #ffffff; border: 1.5px solid #a7f3d0; border-left: 6px solid #059669; border-radius: var(--r-lg); padding: 18px 20px; text-decoration: none; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-sm); transition: var(--transition);">
-                    <div style="width: 48px; height: 48px; border-radius: 14px; background: #ecfdf5; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">🏨</div>
-                    <div>
-                        <div style="font-size: 15.5px; font-weight: 800; color: #059669; line-height: 1.2;">Enregistrer occupation</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 3px;">Arrivée & encaissement direct</div>
-                    </div>
-                </a>
 
-                <a href="<?= BASE_URL ?>/modules/checkin_checkout/checkout.php" class="action-card-bordered" style="background: #ffffff; border: 1.5px solid #fde68a; border-left: 6px solid #d97706; border-radius: var(--r-lg); padding: 18px 20px; text-decoration: none; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-sm); transition: var(--transition);">
-                    <div style="width: 48px; height: 48px; border-radius: 14px; background: #fffbeb; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">📋</div>
-                    <div>
-                        <div style="font-size: 15.5px; font-weight: 800; color: #d97706; line-height: 1.2;">Départ client</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 3px;">Facture & passage en ménage</div>
-                    </div>
-                </a>
+            <button type="button" onclick="toggleOmBalance()" id="omToggleBtn" class="om-btn-toggle-balance">
+                <span id="omToggleText">Masquer le solde</span> <span id="omToggleIcon">👁️</span>
+            </button>
 
-                <a href="<?= BASE_URL ?>/modules/comptabilite/add_depense.php" class="action-card-bordered" style="background: #ffffff; border: 1.5px solid #fecdd3; border-left: 6px solid #e11d48; border-radius: var(--r-lg); padding: 18px 20px; text-decoration: none; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-sm); transition: var(--transition);">
-                    <div style="width: 48px; height: 48px; border-radius: 14px; background: #fff1f2; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">💸</div>
-                    <div>
-                        <div style="font-size: 15.5px; font-weight: 800; color: #e11d48; line-height: 1.2;">Sortie de caisse</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 3px;">Achats savon, eau, maintenance</div>
+            <div class="om-hero-subaccounts">
+                <div class="om-subaccount-box">
+                    <div class="om-subaccount-title">
+                        <span>🟢</span> <span>Entrées Séjours</span>
                     </div>
-                </a>
-
-                <?php if (is_supervisor()): ?>
-                <a href="<?= BASE_URL ?>/modules/comptabilite/transfert_boss.php" class="action-card-bordered" style="background: #ffffff; border: 1.5px solid #fde68a; border-left: 6px solid #b45309; border-radius: var(--r-lg); padding: 18px 20px; text-decoration: none; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-sm); transition: var(--transition);">
-                    <div style="width: 48px; height: 48px; border-radius: 14px; background: #fffbeb; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">👑</div>
-                    <div>
-                        <div style="font-size: 15.5px; font-weight: 800; color: #b45309; line-height: 1.2;">Verser au Boss</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 3px;">Remise d'argent quinzaine & décharge</div>
+                    <div class="om-subaccount-value" id="omSubBoss" style="color: #86efac;">
+                        <?= format_prix($entrees_today) ?>
                     </div>
-                </a>
-                <?php else: ?>
-                <a href="<?= BASE_URL ?>/modules/chambres/list.php?statut=nettoyage" class="action-card-bordered" style="background: #ffffff; border: 1.5px solid #a5f3fc; border-left: 6px solid #0891b2; border-radius: var(--r-lg); padding: 18px 20px; text-decoration: none; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-sm); transition: var(--transition);">
-                    <div style="width: 48px; height: 48px; border-radius: 14px; background: #ecfeff; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">🧹</div>
-                    <div>
-                        <div style="font-size: 15.5px; font-weight: 800; color: #0891b2; line-height: 1.2;">Nettoyage Chambres</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 3px;">Valider les chambres faites</div>
+                </div>
+                <div class="om-subaccount-box">
+                    <div class="om-subaccount-title">
+                        <span>🔴</span> <span>Sorties Justifiées</span>
                     </div>
-                </a>
-                <?php endif; ?>
-
+                    <div class="om-subaccount-value" id="omSubGuichet" style="color: #fca5a5;">
+                        <?= format_prix($sorties_today) ?>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- ── CHIFFRES DU JOUR CAISSIÈRE ── -->
-        <div class="metrics-grid" style="margin-bottom: 18px;">
-            <div class="metric-card" style="border-left: 4px solid #059669;">
-                <div class="metric-card-header">
-                    <span class="metric-label" style="color: #059669;">🟢 Entrées du Jour</span>
+        <!-- ── 2. BANNIÈRE HORIZONTALE OCCUPATION ── -->
+        <a href="<?= BASE_URL ?>/modules/chambres/list.php" class="om-credit-banner">
+            <div class="om-credit-icon">
+                🛏️
+            </div>
+            <div class="om-credit-info">
+                <div class="om-credit-title">Occupation Chambres : <strong><?= $taux_occupation ?>%</strong></div>
+                <div class="om-credit-subtitle"><?= $ch_occupees ?>/<?= $total_chambres ?> occupées &bull; <?= $ch_libres ?> chambres prêtes</div>
+            </div>
+            <div class="om-credit-arrow">
+                &rsaquo;
+            </div>
+        </a>
+
+        <!-- ── 3. GRILLE DES SERVICES CAISSIÈRE (TRICHE ORANGE MONEY) ── -->
+        <div class="om-services-section">
+            <div class="om-section-title">
+                <span>⚡</span> <span>Opérations Caissière</span>
+            </div>
+            <div class="om-services-grid">
+                <!-- 1. Enregistrer Occupation -->
+                <a href="<?= BASE_URL ?>/modules/checkin_checkout/express_checkin.php" class="om-service-tile">
+                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #ecfdf5, #d1fae5); border: 1.5px solid #a7f3d0;">
+                        <span>⚡</span>
+                    </div>
+                    <span class="om-tile-label">Arrivée Directe</span>
+                </a>
+
+                <!-- 2. Départ Client -->
+                <a href="<?= BASE_URL ?>/modules/checkin_checkout/checkout.php" class="om-service-tile">
+                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 1.5px solid #fde68a;">
+                        <span>📋</span>
+                    </div>
+                    <span class="om-tile-label">Départ Client</span>
+                </a>
+
+                <!-- 3. Sortie Caisse -->
+                <a href="<?= BASE_URL ?>/modules/comptabilite/add_depense.php" class="om-service-tile">
+                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #fff1f2, #ffe4e6); border: 1.5px solid #fecdd3;">
+                        <span>💸</span>
+                    </div>
+                    <span class="om-tile-label">Sortie Caisse</span>
+                </a>
+
+                <!-- 4. Verser au Boss ou Chambres -->
+                <?php if (is_supervisor()): ?>
+                <a href="<?= BASE_URL ?>/modules/comptabilite/transfert_boss.php" class="om-service-tile">
+                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #fff7ed, #ffedd5); border: 1.5px solid #fed7aa;">
+                        <span>👑</span>
+                    </div>
+                    <span class="om-tile-label">Verser Boss</span>
+                </a>
+                <?php else: ?>
+                <a href="<?= BASE_URL ?>/modules/chambres/list.php" class="om-service-tile">
+                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 1.5px solid #bbf7d0;">
+                        <span>🛏️</span>
+                    </div>
+                    <span class="om-tile-label">Chambres</span>
+                </a>
+                <?php endif; ?>
+
+                <!-- 5. Nettoyage -->
+                <a href="<?= BASE_URL ?>/modules/menage/tracabilite.php" class="om-service-tile">
+                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #ecfeff, #cffafe); border: 1.5px solid #a5f3fc;">
+                        <span>🧹</span>
+                    </div>
+                    <span class="om-tile-label">Nettoyage</span>
+                </a>
+
+                <!-- 6. Fichier Clients -->
+                <a href="<?= BASE_URL ?>/modules/clients/list.php" class="om-service-tile">
+                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #eef2ff, #e0e7ff); border: 1.5px solid #c7d2fe;">
+                        <span>👤</span>
+                    </div>
+                    <span class="om-tile-label">Clients</span>
+                </a>
+
+                <!-- 7. Facturation -->
+                <a href="<?= BASE_URL ?>/modules/facturation/list.php" class="om-service-tile">
+                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #fdf4ff, #fae8ff); border: 1.5px solid #f0abfc;">
+                        <span>🧾</span>
+                    </div>
+                    <span class="om-tile-label">Factures</span>
+                </a>
+
+                <!-- 8. Journal Caisse -->
+                <a href="<?= BASE_URL ?>/modules/comptabilite/journal.php" class="om-service-tile">
+                    <div class="om-tile-icon" style="background: linear-gradient(135deg, #f8fafc, #f1f5f9); border: 1.5px solid #cbd5e1;">
+                        <span>📊</span>
+                    </div>
+                    <span class="om-tile-label">Journal</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- ── 4. FLUX DU JOUR CAISSIÈRE ── -->
+        <div class="om-flux-grid">
+            <div class="om-flux-card" style="border-left: 4px solid #059669;">
+                <div class="om-flux-header">
+                    <span style="font-size: 11px; font-weight: 700; color: #059669;">🟢 ENTRÉES DU JOUR</span>
+                    <span class="om-flux-tag" style="background: #d1fae5; color: #065f46;">Séjours</span>
                 </div>
-                <div class="metric-value" style="color: #059669;"><?= format_prix($entrees_today) ?></div>
-                <div class="metric-sub">Paiements perçus aujourd'hui</div>
+                <div class="om-flux-value" style="color: #059669;">
+                    <?= format_prix($entrees_today) ?>
+                </div>
+                <div class="om-flux-desc">Paiements perçus aujourd'hui</div>
             </div>
 
-            <div class="metric-card" style="border-left: 4px solid #e11d48;">
-                <div class="metric-card-header">
-                    <span class="metric-label" style="color: #e11d48;">🔴 Dépenses du Jour</span>
+            <div class="om-flux-card" style="border-left: 4px solid #e11d48;">
+                <div class="om-flux-header">
+                    <span style="font-size: 11px; font-weight: 700; color: #e11d48;">🔴 DÉPENSES DU JOUR</span>
+                    <span class="om-flux-tag" style="background: #ffe4e6; color: #9f1239;">Charges</span>
                 </div>
-                <div class="metric-value" style="color: #e11d48;"><?= format_prix($sorties_today) ?></div>
-                <div class="metric-sub">Sorties justifiées aujourd'hui</div>
-            </div>
-
-            <div class="metric-card" style="border-left: 4px solid <?= $solde_net_today >= 0 ? '#4f46e5' : '#e11d48' ?>;">
-                <div class="metric-card-header">
-                    <span class="metric-label" style="color: var(--primary);">⚖️ Solde Net Caisse</span>
+                <div class="om-flux-value" style="color: #e11d48;">
+                    <?= format_prix($sorties_today) ?>
                 </div>
-                <div class="metric-value" style="color: <?= $solde_net_today >= 0 ? 'var(--text-primary)' : '#e11d48' ?>;"><?= format_prix($solde_net_today) ?></div>
-                <div class="metric-sub">Espèces en caisse</div>
+                <div class="om-flux-desc">Sorties justifiées aujourd'hui</div>
             </div>
         </div>
 
@@ -517,5 +667,44 @@ require_once INCLUDES_PATH . '/header.php';
     </div>
 
 </div>
+
+<script>
+// ── Bascule Masquer / Afficher le Solde Style Orange Money ──
+let isOmBalanceHidden = false;
+const realOmHeroAmount = <?= json_encode($is_boss ? format_prix($solde_total_tresorerie ?? 0) : format_prix($solde_net_today ?? 0)) ?>;
+const realOmSubBoss    = <?= json_encode($is_boss ? format_prix($caisse_boss_total ?? 0) : format_prix($entrees_today ?? 0)) ?>;
+const realOmSubGuichet = <?= json_encode($is_boss ? format_prix($especes_caissieres_total ?? 0) : format_prix($sorties_today ?? 0)) ?>;
+
+function toggleOmBalance() {
+    isOmBalanceHidden = !isOmBalanceHidden;
+    const heroEl    = document.getElementById('omHeroAmount');
+    const bossEl    = document.getElementById('omSubBoss');
+    const guichetEl = document.getElementById('omSubGuichet');
+    const btnText   = document.getElementById('omToggleText');
+    const btnIcon   = document.getElementById('omToggleIcon');
+
+    if (isOmBalanceHidden) {
+        if (heroEl) heroEl.textContent = '***** FCFA';
+        if (bossEl) bossEl.textContent = '***** FCFA';
+        if (guichetEl) guichetEl.textContent = '***** FCFA';
+        if (btnText) btnText.textContent = 'Afficher le solde';
+        if (btnIcon) btnIcon.textContent = '👁️';
+        localStorage.setItem('alma_om_balance_hidden', 'true');
+    } else {
+        if (heroEl) heroEl.textContent = realOmHeroAmount;
+        if (bossEl) bossEl.textContent = realOmSubBoss;
+        if (guichetEl) guichetEl.textContent = realOmSubGuichet;
+        if (btnText) btnText.textContent = 'Masquer le solde';
+        if (btnIcon) btnIcon.textContent = '👁️';
+        localStorage.removeItem('alma_om_balance_hidden');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (localStorage.getItem('alma_om_balance_hidden') === 'true') {
+        toggleOmBalance();
+    }
+});
+</script>
 
 <?php require_once INCLUDES_PATH . '/footer.php'; ?>

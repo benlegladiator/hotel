@@ -687,73 +687,309 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 
 /* ── 14. Responsive Mobile & Expérience App Native ─────────── */
 
-/* ── Barre de Navigation Inférieure Mobile (Bottom Navigation) ── */
+/* ── Barre de Navigation Inférieure Mobile Style Orange Money ── */
 .mobile-bottom-nav {
     display: none;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
     height: calc(64px + env(safe-area-inset-bottom, 0px));
     padding-bottom: env(safe-area-inset-bottom, 0px);
-    background: #ffffff;
-    border-top: 1px solid var(--border-light);
-    box-shadow: 0 -4px 24px rgba(15, 23, 42, 0.08);
-    z-index: 9990;
+    background: #0f172a !important; /* Thème sombre haut de gamme Orange Money */
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.35) !important;
+    z-index: 99999 !important;
     justify-content: space-around;
     align-items: center;
     -webkit-user-select: none;
     user-select: none;
 }
-.mobile-bottom-nav a,
-.mobile-bottom-nav button {
+.mobile-bottom-nav a {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 3px;
+    gap: 4px;
     background: none;
     border: none;
-    color: var(--text-secondary);
+    color: #94a3b8 !important;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
     text-decoration: none;
     flex: 1;
     height: 100%;
     cursor: pointer;
-    transition: var(--transition);
+    transition: all 0.2s ease;
     -webkit-tap-highlight-color: transparent;
 }
-.mobile-bottom-nav a.active,
-.mobile-bottom-nav a:active,
-.mobile-bottom-nav button:active {
-    color: var(--primary);
+.mobile-bottom-nav a svg {
+    transition: transform 0.15s ease, stroke 0.15s ease;
+    stroke: #94a3b8;
 }
-.mobile-bottom-nav-action {
+.mobile-bottom-nav a.active {
+    color: #ff7900 !important; /* Couleur vibrante Orange Money */
+}
+.mobile-bottom-nav a.active svg {
+    stroke: #ff7900 !important;
+    transform: scale(1.1);
+}
+.mobile-bottom-nav a:active {
+    transform: scale(0.92);
+}
+
+/* ========================================================= */
+/* ORANGE MONEY MOBILE EXPERIENCE (DASHBOARD & SERVICES GRID) */
+/* ========================================================= */
+
+/* ── Carte Héro "Compte Principal" Orange Money ── */
+.om-hero-card {
+    background: linear-gradient(135deg, #18181b 0%, #0f172a 100%);
+    border-radius: 20px;
+    padding: 20px;
+    color: #ffffff;
     position: relative;
-    top: -14px;
-    flex: 0 0 auto;
-    padding: 0 6px;
+    overflow: hidden;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 16px;
 }
-.mobile-bottom-nav-action-btn {
-    width: 52px;
-    height: 52px;
+.om-hero-card::after {
+    content: '';
+    position: absolute;
+    right: -20px;
+    bottom: -30px;
+    width: 140px;
+    height: 80px;
+    background: linear-gradient(135deg, rgba(255, 121, 0, 0.25), rgba(245, 158, 11, 0.15));
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--gold-500), var(--gold-600));
-    color: #ffffff !important;
+    filter: blur(25px);
+    pointer-events: none;
+}
+.om-hero-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+.om-hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #cbd5e1;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+.om-hero-qr {
+    width: 44px;
+    height: 44px;
+    background: #ffffff;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
-    font-weight: bold;
-    box-shadow: 0 6px 18px rgba(217, 119, 6, 0.42);
-    border: 3.5px solid #ffffff;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-    text-decoration: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    flex-shrink: 0;
 }
-.mobile-bottom-nav-action-btn:active {
+.om-hero-amount {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    margin: 6px 0 12px 0;
+    line-height: 1.1;
+}
+.om-btn-toggle-balance {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+.om-btn-toggle-balance:active {
+    background: rgba(255, 255, 255, 0.22);
+    transform: scale(0.96);
+}
+.om-hero-subaccounts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.om-subaccount-box {
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.om-subaccount-title {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 600;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.om-subaccount-value {
+    font-size: 15px;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+/* ── Bannière "Mes crédits / Occupation" Orange Money ── */
+.om-credit-banner {
+    background: #ffffff;
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    margin-bottom: 22px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.om-credit-banner:active {
+    transform: scale(0.98);
+}
+.om-credit-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #eff6ff;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+.om-credit-info {
+    flex: 1;
+    min-width: 0;
+}
+.om-credit-title {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+.om-credit-subtitle {
+    font-size: 11.5px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+.om-credit-arrow {
+    color: #ff7900;
+    font-size: 18px;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+/* ── Grille des Services (Triche Orange Money) ── */
+.om-services-section {
+    margin-bottom: 24px;
+}
+.om-section-title {
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-light);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.om-services-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px 8px;
+}
+.om-service-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: transform 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+.om-service-tile:active {
     transform: scale(0.92);
-    box-shadow: 0 2px 8px rgba(217, 119, 6, 0.3);
+}
+.om-tile-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+    margin-bottom: 7px;
+    transition: all 0.2s ease;
+}
+.om-tile-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.25;
+    max-width: 72px;
+    word-break: break-word;
+}
+
+/* ── Cartes Flux du Jour (Recettes / Dépenses) ── */
+.om-flux-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.om-flux-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    border: 1px solid var(--border-light);
+}
+.om-flux-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+.om-flux-tag {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 6px;
+}
+.om-flux-value {
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 2px;
+}
+.om-flux-desc {
+    font-size: 11px;
+    color: var(--text-light);
 }
 
 /* ── Fond sombre (Backdrop) du Tiroir Mobile ── */
@@ -812,9 +1048,9 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
     .mobile-bottom-nav {
         display: flex;
     }
-    /* Espace de sécurité en bas pour ne pas recouvrir le contenu */
+    /* Espace de sécurité en bas pour ne pas recouvrir le contenu avec la barre fixe */
     .main-content {
-        padding: 16px 14px calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+        padding: 16px 14px calc(88px + env(safe-area-inset-bottom, 0px)) !important;
     }
 
     /* Topbar compacte & épurée */
