@@ -63,7 +63,7 @@ $hotel_nom = get_system_setting('nom_hotel', 'Alma Hotel');
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Accès Sécurisé — <?= h($hotel_nom) ?></title>
     <meta name="description" content="Espace d'authentification pour <?= h($hotel_nom) ?>">
-    <link rel="manifest" href="<?= BASE_URL ?>/manifest.json">
+    <link rel="manifest" href="<?= BASE_URL ?>/manifest.json" crossorigin="use-credentials">
     <link rel="icon" type="image/png" sizes="32x32" href="<?= BASE_URL ?>/assets/img/pwa/favicon-32x32.png">
     <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/pwa/favicon.png">
     <link rel="shortcut icon" href="<?= BASE_URL ?>/favicon.ico">

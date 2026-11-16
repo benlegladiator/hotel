@@ -19,7 +19,7 @@ $accent = get_user_accent();
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="manifest" href="<?= BASE_URL ?>/manifest.json">
+    <link rel="manifest" href="<?= BASE_URL ?>/manifest.json" crossorigin="use-credentials">
     <link rel="icon" type="image/png" sizes="32x32" href="<?= BASE_URL ?>/assets/img/pwa/favicon-32x32.png">
     <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/pwa/favicon.png">
     <link rel="shortcut icon" href="<?= BASE_URL ?>/favicon.ico">
