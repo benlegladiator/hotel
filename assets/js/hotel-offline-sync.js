@@ -499,15 +499,15 @@ function showHotelAutoInstallPrompt() {
     card.id = 'hotelAutoInstallPrompt';
     card.style.cssText = `
       position: fixed;
-      bottom: 24px;
-      right: 20px;
-      left: 20px;
+      bottom: calc(75px + env(safe-area-inset-bottom, 0px));
+      right: 16px;
+      left: 16px;
       max-width: 440px;
       margin: 0 auto;
       background: #ffffff;
       border-radius: 18px;
       box-shadow: 0 20px 45px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(15, 23, 42, 0.08);
-      z-index: 999999;
+      z-index: 1000005;
       padding: 16px 18px;
       font-family: inherit;
       animation: hotelSlideUp 0.35s ease-out;
